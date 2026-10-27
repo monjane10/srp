@@ -1,0 +1,4 @@
+Coloca aqui a música (por exemplo: musica.mp3).
+Depois abre js/config.js e escreve na secção "musica":
+  ficheiro: "assets/audio/musica.mp3",
+Formatos recomendados: .mp3 (funciona em todos os telemóveis) ou .m4a.
