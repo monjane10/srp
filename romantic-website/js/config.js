@@ -140,11 +140,11 @@ window.SITE_CONFIG = {
      2. Escreve o caminho abaixo: ficheiro: "assets/audio/musica.mp3"
      Se ficar vazio, o botão de música não aparece.  */
   musica: {
-    ficheiro: "",
+    ficheiro: "assets/audio/14-ayra-starr-heaven-baby-ft-zayn_-NaijaGuddys.com_.mp3",
     // Nome da música, mostrado no botão (opcional).
-    titulo: "",
+    titulo: "Heaven Baby",
     // true = a música começa quando ela carrega em "Abrir o meu presente".
-    tocarAoAbrir: false,
+    tocarAoAbrir: true,
   },
 
   /* ---------- Rodapé ---------- */
