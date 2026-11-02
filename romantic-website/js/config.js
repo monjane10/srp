@@ -38,6 +38,26 @@ window.SITE_CONFIG = {
       "precisares de te lembrar do quanto és importante.",
   },
 
+  /* ---------- 2b. Um dia na minha cabeça ----------
+     Enquanto ela desce a página, o céu passa do amanhecer à noite.
+     hora: define a cor do céu e a posição do sol/lua (formato "HH:MM").
+     As horas devem seguir em frente; depois da meia-noite usa "00:30", "02:14"…  */
+  dia: {
+    rotulo: "Um dia na minha cabeça",
+    titulo: "Preciso de ser honesto contigo…",
+    dica: "Continua a descer",
+    horaInicial: "05:40",
+    momentoInicial: "Antes do amanhecer",
+    cenas: [
+      { hora: "06:20", momento: "Amanhecer", texto: "Penso muito em ti. Mais do que alguma vez admito em voz alta." },
+      { hora: "07:05", momento: "Manhã", texto: "As minhas manhãs começam com o teu nome na cabeça." },
+      { hora: "13:10", momento: "Durante o dia", texto: "Mesmo quando tento manter-me ocupado, tudo acaba por voltar a ti." },
+      { hora: "17:50", momento: "Fim de tarde", texto: "Fico a imaginar o que estás a fazer, como te estás a sentir… e se também pensas em mim." },
+      { hora: "23:40", momento: "Noite", texto: "E as minhas noites terminam com pensamentos sobre ti que não me deixam dormir." },
+      { hora: "02:14", momento: "Madrugada", texto: "Porque a minha mente nunca se afasta de ti. De alguma forma, és sempre tu." },
+    ],
+  },
+
   /* ---------- 3. Galeria ----------
      src: caminho do ficheiro (tem de existir em assets/images/)
      alt: descrição curta da foto (para acessibilidade)

@@ -58,6 +58,7 @@
   <!-- ============ NAVEGAÇÃO DISCRETA ============ -->
   <nav class="chapters" aria-label="Secções do presente">
     <a class="chapters__link" href="#abertura" data-label="Abertura"><span class="sr-only">Abertura</span></a>
+    <a class="chapters__link" href="#dia" data-label="Um dia na minha cabeça"><span class="sr-only">Um dia na minha cabeça</span></a>
     <a class="chapters__link" href="#galeria" data-label="Galeria"><span class="sr-only">Galeria</span></a>
     <a class="chapters__link" href="#carta" data-label="Carta"><span class="sr-only">Carta</span></a>
     <a class="chapters__link" href="#gosto" data-label="O que gosto em ti"><span class="sr-only">O que gosto em ti</span></a>
@@ -72,17 +73,47 @@
         <p class="opening__dedication enter" data-fill="abertura.dedicatoria"></p>
         <h2 class="opening__title enter" id="opening-title" tabindex="-1" data-fill="abertura.titulo"></h2>
         <p class="opening__text enter" data-fill="abertura.texto"></p>
-        <a class="scroll-cue enter" href="#galeria">
+        <a class="scroll-cue enter" href="#dia">
           <span>Começar</span>
           <span class="scroll-cue__line" aria-hidden="true"></span>
         </a>
       </div>
     </section>
 
+    <!-- ============ UM DIA NA MINHA CABEÇA ============
+         Secção alta: o conteúdo fica fixo e o scroll faz o tempo passar. -->
+    <section class="day" id="dia" aria-labelledby="day-title">
+      <div class="day__sticky">
+        <div class="stars day__stars" aria-hidden="true"></div>
+        <div class="day__sky" aria-hidden="true">
+          <span class="day__sun"></span>
+          <span class="day__moon"></span>
+        </div>
+
+        <div class="day__clock" aria-hidden="true">
+          <p class="day__label"><span class="day__chapter">I</span> <span data-fill="dia.rotulo"></span></p>
+          <p class="day__time" id="day-time"></p>
+          <p class="day__moment" id="day-moment"></p>
+        </div>
+
+        <div class="day__scenes" id="day-scenes">
+          <div class="day__scene is-active">
+            <h2 class="day__title" id="day-title" data-fill="dia.titulo"></h2>
+            <p class="day__hint">
+              <span data-fill="dia.dica"></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+            </p>
+          </div>
+        </div>
+
+        <div class="day__dots" id="day-dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
     <!-- ============ GALERIA ============ -->
     <section class="section gallery-section" id="galeria" aria-labelledby="gallery-title">
       <header class="section__header" data-reveal>
-        <p class="section__number">I</p>
+        <p class="section__number">II</p>
         <h2 class="section__title" id="gallery-title" data-fill="galeria.titulo"></h2>
         <p class="section__lead" data-fill="galeria.subtitulo"></p>
       </header>
@@ -92,7 +123,7 @@
     <!-- ============ CARTA ============ -->
     <section class="section letter-section" id="carta" aria-labelledby="letter-title">
       <header class="section__header section__header--center" data-reveal>
-        <p class="section__number">II</p>
+        <p class="section__number">III</p>
         <h2 class="section__title" id="letter-title" data-fill="carta.titulo"></h2>
       </header>
 
@@ -109,7 +140,7 @@
     <!-- ============ O QUE GOSTO EM TI ============ -->
     <section class="section likes" id="gosto" aria-labelledby="likes-title">
       <header class="section__header section__header--center" data-reveal>
-        <p class="section__number">III</p>
+        <p class="section__number">IV</p>
         <h2 class="section__title" id="likes-title" data-fill="gosto.titulo"></h2>
         <p class="section__lead" data-fill="gosto.subtitulo"></p>
       </header>
@@ -132,7 +163,7 @@
 
       <div class="surprise__inner">
         <header class="section__header section__header--center" data-reveal>
-          <p class="section__number">IV</p>
+          <p class="section__number">V</p>
           <h2 class="section__title" id="surprise-title" data-fill="surpresa.titulo"></h2>
           <p class="section__lead" data-fill="surpresa.subtitulo"></p>
         </header>

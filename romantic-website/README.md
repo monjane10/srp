@@ -53,7 +53,7 @@ nome: "Ana",          // nome dela
 remetente: "Kenny",   // o teu nome (assinatura)
 ```
 
-Todo o texto (ecrã inicial, legendas, carta, lista "o que mais gosto em ti", surpresa e rodapé) está nesse ficheiro, separado por secções. Onde estiver `{nome}`, o site coloca o nome dela automaticamente.
+Todo o texto (ecrã inicial, "Um dia na minha cabeça", legendas, carta, lista "o que mais gosto em ti", surpresa e rodapé) está nesse ficheiro, separado por secções. Onde estiver `{nome}`, o site coloca o nome dela automaticamente.
 
 ## 3. Música (opcional)
 

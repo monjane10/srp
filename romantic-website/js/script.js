@@ -134,6 +134,173 @@
     }, duration);
   }
 
+  /* ---------- Um dia na minha cabeça ---------- */
+
+  // Cor do céu ao longo do dia: [minutos desde 00:00, topo, horizonte].
+  // Depois da meia-noite os minutos continuam a contar (02:00 = 1560).
+  const SKY = [
+    [330, "#231c26", "#4a3442"],
+    [380, "#5b3f55", "#f4b6c2"],
+    [425, "#f9d3db", "#fff0f3"],
+    [790, "#fffdfd", "#fff0f3"],
+    [1070, "#f6c9cf", "#fbe0d6"],
+    [1150, "#6e4560", "#c97b8c"],
+    [1290, "#2a2130", "#3b2a3a"],
+    [1420, "#221c23", "#2f2531"],
+    [1580, "#17131a", "#241c26"],
+  ];
+
+  const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const mixRgb = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  const rgb = (c) => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+  const luminance = (c) => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+
+  function skyAt(minutes) {
+    const last = SKY.length - 1;
+    if (minutes <= SKY[0][0]) return [hexToRgb(SKY[0][1]), hexToRgb(SKY[0][2])];
+    if (minutes >= SKY[last][0]) return [hexToRgb(SKY[last][1]), hexToRgb(SKY[last][2])];
+    const i = SKY.findIndex((stop) => stop[0] > minutes) - 1;
+    const [from, to] = [SKY[i], SKY[i + 1]];
+    const t = (minutes - from[0]) / (to[0] - from[0]);
+    return [
+      mixRgb(hexToRgb(from[1]), hexToRgb(to[1]), t),
+      mixRgb(hexToRgb(from[2]), hexToRgb(to[2]), t),
+    ];
+  }
+
+  // Posição num arco: sobe de um lado, passa pelo topo e desce do outro.
+  function placeOnArc(el, minutes, rise, set) {
+    const t = (minutes - rise) / (set - rise);
+    const visible = t > 0 && t < 1;
+    const height = visible ? Math.sin(Math.PI * t) : 0;
+    el.style.setProperty("--x", `${8 + 84 * clamp01(t)}%`);
+    el.style.setProperty("--y", `${54 - height * 28}%`);
+    el.style.opacity = visible ? Math.min(1, height * 2.5).toFixed(2) : "0";
+  }
+
+  function setupDay() {
+    const settings = config.dia || {};
+    const section = $("#dia");
+    const scenesConfig = settings.cenas || [];
+
+    if (!scenesConfig.length) {
+      section.hidden = true;
+      document.querySelector('.chapters__link[href="#dia"]').hidden = true;
+      return;
+    }
+
+    const sticky = section.querySelector(".day__sticky");
+    const timeEl = $("#day-time");
+    const momentEl = $("#day-moment");
+    const sun = section.querySelector(".day__sun");
+    const moon = section.querySelector(".day__moon");
+
+    // Converte "HH:MM" em minutos, sempre a andar para a frente no tempo
+    const toMinutes = (text, after) => {
+      const [h, m] = String(text).split(":").map(Number);
+      let minutes = h * 60 + m;
+      while (minutes < after) minutes += 1440;
+      return minutes;
+    };
+
+    const times = [toMinutes(settings.horaInicial || "05:40", 0)];
+    const moments = [settings.momentoInicial || ""];
+    const scenes = [section.querySelector(".day__scene")];
+    const scenesEl = $("#day-scenes");
+
+    scenesConfig.forEach((scene, i) => {
+      times.push(toMinutes(scene.hora, times[times.length - 1]));
+      moments.push(scene.momento || "");
+      const p = document.createElement("p");
+      p.className = "day__scene day__text";
+      if (i === scenesConfig.length - 1) p.classList.add("day__text--last");
+      p.textContent = personalise(scene.texto);
+      scenesEl.appendChild(p);
+      scenes.push(p);
+    });
+
+    const dots = scenes.map(() => {
+      const dot = document.createElement("span");
+      dot.className = "day__dot";
+      $("#day-dots").appendChild(dot);
+      return dot;
+    });
+
+    const count = scenes.length;
+    section.style.setProperty("--count", count);
+
+    const formatTime = (minutes) => {
+      const m = Math.round(minutes) % 1440;
+      return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+    };
+
+    let current = -1;
+    let ticking = false;
+
+    function update() {
+      ticking = false;
+      const rect = section.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      const progress = scrollable > 0 ? clamp01(-rect.top / scrollable) : 0;
+      const position = progress * (count - 1);
+      const index = Math.floor(position);
+      const next = Math.min(index + 1, count - 1);
+      const minutes = times[index] + (times[next] - times[index]) * (position - index);
+
+      const [top, bottom] = skyAt(minutes);
+      const light = luminance(mixRgb(top, bottom, 0.5));
+      sticky.style.setProperty("--sky-top", rgb(top));
+      sticky.style.setProperty("--sky-bottom", rgb(bottom));
+      section.style.setProperty("--sky-bottom", rgb(bottom));
+      sticky.style.setProperty("--stars", clamp01((0.42 - light) / 0.22).toFixed(2));
+      sticky.classList.toggle("is-dark", light < 0.55);
+
+      placeOnArc(sun, minutes, 350, 1160);
+      placeOnArc(moon, minutes, 1150, 1680);
+      timeEl.textContent = formatTime(minutes);
+
+      const active = Math.round(position);
+      if (active !== current) {
+        current = active;
+        momentEl.textContent = moments[active];
+        scenes.forEach((scene, i) => {
+          scene.classList.toggle("is-active", i === active);
+          scene.classList.toggle("is-past", i < active);
+        });
+        dots.forEach((dot, i) => dot.classList.toggle("is-current", i === active));
+      }
+    }
+
+    const requestUpdate = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    // Só faz contas enquanto a secção está perto do ecrã
+    if ("IntersectionObserver" in window) {
+      let listening = false;
+      new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !listening) {
+          window.addEventListener("scroll", requestUpdate, { passive: true });
+          listening = true;
+          requestUpdate();
+        } else if (!entry.isIntersecting && listening) {
+          window.removeEventListener("scroll", requestUpdate);
+          listening = false;
+          update();
+        }
+      }, { rootMargin: "50% 0px" }).observe(section);
+    } else {
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+    }
+
+    window.addEventListener("resize", requestUpdate);
+    update();
+  }
+
   /* ---------- Galeria + fotografia ampliada ---------- */
 
   const photos = ((config.galeria && config.galeria.fotos) || []).filter((p) => p && p.src);
@@ -557,6 +724,7 @@
   fillTexts();
   document.querySelectorAll(".stars").forEach((el) => scatterStars(el, window.innerWidth < 600 ? 50 : 90));
   setupIntro();
+  setupDay();
   renderGallery();
   setupLightbox();
   renderLetter();
