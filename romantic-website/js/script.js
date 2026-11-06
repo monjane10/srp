@@ -134,6 +134,30 @@
     }, duration);
   }
 
+  /* ---------- A frase de hoje ---------- */
+
+  function setupDaily() {
+    const settings = config.fraseDoDia || {};
+    const phrases = settings.frases || [];
+    const box = $("#daily");
+
+    if (!phrases.length) {
+      box.hidden = true;
+      return;
+    }
+
+    // Conta os dias desde uma data fixa (na hora local), por isso a frase
+    // muda à meia-noite e é a mesma durante o dia inteiro.
+    const today = new Date();
+    const dayNumber = Math.floor(
+      (Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(2026, 0, 1)) / 86400000
+    );
+    const index = ((dayNumber % phrases.length) + phrases.length) % phrases.length;
+
+    $("#daily-text").textContent = personalise(phrases[index]);
+    $("#daily-date").textContent = today.toLocaleDateString("pt-PT", { day: "numeric", month: "long" });
+  }
+
   /* ---------- Um dia na minha cabeça ---------- */
 
   // Cor do céu ao longo do dia: [minutos desde 00:00, topo, horizonte].
@@ -312,7 +336,7 @@
   function renderGallery() {
     const gallery = $("#gallery");
     const zoomIcon =
-      '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>';
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>';
 
     photos.forEach((photo, index) => {
       const figure = document.createElement("figure");
@@ -320,25 +344,68 @@
       figure.dataset.reveal = "";
       figure.style.setProperty("--delay", `${(index % 2) * 0.12}s`);
 
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "photo__frame media";
-      button.setAttribute("aria-label", `Ampliar fotografia ${index + 1} de ${photos.length}`);
-      button.addEventListener("click", () => openLightbox(index, button));
+      const frame = document.createElement("div");
+      frame.className = "photo__frame";
 
+      // Frente: a fotografia
+      const front = document.createElement("span");
+      front.className = "photo__face photo__face--front media";
       const img = document.createElement("img");
       img.alt = personalise(photo.alt);
       img.loading = "lazy";
       img.decoding = "async";
       img.style.objectPosition = photo.foco || "50% 40%";
+      front.appendChild(img);
 
-      const zoom = document.createElement("span");
+      const zoom = document.createElement("button");
+      zoom.type = "button";
       zoom.className = "photo__zoom";
-      zoom.setAttribute("aria-hidden", "true");
+      zoom.setAttribute("aria-label", `Ampliar fotografia ${index + 1} de ${photos.length}`);
       zoom.innerHTML = zoomIcon;
+      zoom.addEventListener("click", () => openLightbox(index, zoom));
 
-      button.append(img, zoom);
-      figure.appendChild(button);
+      if (photo.nota) {
+        // Verso: a nota escondida. O cartão inteiro é o botão que vira.
+        const flip = document.createElement("button");
+        flip.type = "button";
+        flip.className = "photo__flip";
+        flip.setAttribute("aria-pressed", "false");
+        flip.setAttribute("aria-label", `Virar a fotografia ${index + 1} e ler a nota`);
+
+        const back = document.createElement("span");
+        back.className = "photo__face photo__face--back";
+        const note = document.createElement("span");
+        note.className = "photo__note";
+        note.textContent = personalise(photo.nota);
+        const sign = document.createElement("span");
+        sign.className = "photo__sign";
+        sign.textContent = myName ? `— ${myName}` : "";
+        const hint = document.createElement("span");
+        hint.className = "photo__back-hint";
+        hint.setAttribute("aria-hidden", "true");
+        hint.textContent = "Toca para voltar";
+        back.append(note, sign, hint);
+
+        flip.append(front, back);
+        flip.addEventListener("click", () => {
+          const flipped = flip.getAttribute("aria-pressed") !== "true";
+          flip.setAttribute("aria-pressed", String(flipped));
+          frame.classList.toggle("is-flipped", flipped);
+        });
+        frame.append(flip, zoom);
+      } else {
+        // Sem nota: tocar na fotografia amplia-a
+        const open = document.createElement("button");
+        open.type = "button";
+        open.className = "photo__flip";
+        open.style.cursor = "zoom-in";
+        open.setAttribute("aria-label", `Ampliar fotografia ${index + 1} de ${photos.length}`);
+        open.appendChild(front);
+        open.addEventListener("click", () => openLightbox(index, open));
+        frame.append(open, zoom);
+      }
+
+      figure.appendChild(frame);
 
       if (photo.legenda) {
         const caption = document.createElement("figcaption");
@@ -353,7 +420,7 @@
       }
 
       gallery.appendChild(figure);
-      loadInto(button, img, photo.src);
+      loadInto(front, img, photo.src);
       reveal(figure);
     });
 
@@ -449,16 +516,59 @@
     });
   }
 
-  /* ---------- "Sabes o que mais gosto em ti?" ---------- */
+  /* ---------- "Sabes o que mais gosto em ti?" — baralho de cartões ---------- */
 
   function setupLikes() {
     const likes = config.gosto || {};
     const messages = likes.mensagens || [];
-    const messageEl = $("#likes-message");
-    const countEl = $("#likes-count");
+    const deckEl = $("#deck");
+    const live = $("#likes-live");
     const button = $("#likes-button");
     const dotsEl = $("#likes-dots");
-    let index = -1;
+    const pad = (n) => String(n).padStart(2, "0");
+    let thrown = 0; // cartões que já saíram do baralho (a capa conta)
+    let nextDirection = 1;
+
+    function makeCard(modifier, parts) {
+      const card = document.createElement("div");
+      card.className = `deck__card${modifier ? ` deck__card--${modifier}` : ""}`;
+      card.setAttribute("aria-hidden", "true");
+      parts.forEach(([tag, className, text]) => {
+        const el = document.createElement(tag);
+        el.className = className;
+        el.textContent = text;
+        card.appendChild(el);
+      });
+      deckEl.appendChild(card);
+      return card;
+    }
+
+    // Ordem: capa, uma carta por mensagem e, no fundo, a carta final
+    const cover = makeCard("cover", [
+      ["span", "deck__cover-num", String(messages.length)],
+      ["span", "deck__cover-text", likes.capa || ""],
+      ["span", "deck__cover-hint", likes.dicaCapa || ""],
+    ]);
+    cover.querySelector(".deck__cover-hint").insertAdjacentHTML(
+      "beforeend",
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+    );
+
+    const cards = [cover];
+    messages.forEach((message, i) => {
+      cards.push(makeCard("", [
+        ["span", "deck__quote", "“"],
+        ["p", "deck__text", personalise(message)],
+        ["span", "deck__num", `${pad(i + 1)} / ${pad(messages.length)}`],
+      ]));
+    });
+    cards.push(makeCard("final", [
+      ["span", "deck__quote", "“"],
+      ["p", "deck__text", personalise(likes.final || "…")],
+    ]));
+
+    // Inclinação ligeira e fixa de cada carta, para parecer um monte real
+    const tilts = cards.map((_, i) => ((i * 37) % 7) - 3);
 
     const dots = messages.map(() => {
       const dot = document.createElement("span");
@@ -467,50 +577,163 @@
       return dot;
     });
 
-    button.textContent = likes.botaoInicio || "Diz-me";
+    const isFinal = () => thrown >= cards.length - 1;
 
-    function swapText(text, isPlaceholder) {
-      const update = () => {
-        messageEl.textContent = text;
-        messageEl.classList.toggle("is-placeholder", isPlaceholder);
-        messageEl.classList.remove("is-leaving");
-        messageEl.classList.add("is-entering");
-        // Força o navegador a aplicar o estado inicial antes de animar
-        void messageEl.offsetWidth;
-        messageEl.classList.remove("is-entering");
-      };
-
-      if (prefersReducedMotion()) return update();
-      messageEl.classList.add("is-leaving");
-      window.setTimeout(update, 320);
-    }
-
-    function updateDots() {
-      dots.forEach((dot, i) => {
-        dot.classList.toggle("is-read", i <= index);
-        dot.classList.toggle("is-current", i === index);
+    function layout() {
+      cards.forEach((card, i) => {
+        const depth = i - thrown;
+        card.style.zIndex = String(cards.length - i);
+        if (depth < 0) return; // já saiu: mantém a posição de saída
+        card.classList.toggle("is-top", depth === 0 && !isFinal());
+        card.style.opacity = depth > 2 ? "0" : "1";
+        card.style.transform = depth === 0
+          ? "none"
+          : `translateY(${depth * 12}px) scale(${1 - depth * 0.05}) rotate(${tilts[i]}deg)`;
       });
+
+      const current = thrown - 1; // índice da mensagem visível
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-read", isFinal() || i <= current);
+        dot.classList.toggle("is-current", i === current);
+      });
+
+      button.textContent = thrown === 0
+        ? likes.botaoInicio || "Diz-me"
+        : isFinal() ? likes.botaoRecomecar || "Ler outra vez" : likes.botaoSeguinte || "Mais uma";
     }
+
+    function throwTop(direction) {
+      if (isFinal()) return;
+      const card = cards[thrown];
+      card.classList.remove("is-top");
+      card.style.transform = `translate(${direction * 130}%, -24px) rotate(${direction * 24}deg)`;
+      card.style.opacity = "0";
+      thrown += 1;
+      nextDirection = -direction;
+      layout();
+      live.textContent = cards[thrown].querySelector(".deck__text").textContent;
+    }
+
+    function reset() {
+      thrown = 0;
+      live.textContent = "";
+      layout();
+    }
+
+    button.addEventListener("click", () => (isFinal() ? reset() : throwTop(nextDirection)));
+
+    // Arrastar a carta de cima com o dedo ou o rato
+    let drag = null;
+
+    deckEl.addEventListener("pointerdown", (event) => {
+      const card = cards[thrown];
+      if (isFinal() || !card.contains(event.target)) return;
+      drag = { card, id: event.pointerId, x: event.clientX, y: event.clientY, dx: 0, time: performance.now() };
+      card.setPointerCapture(event.pointerId);
+      card.classList.add("is-dragging");
+    });
+
+    deckEl.addEventListener("pointermove", (event) => {
+      if (!drag || event.pointerId !== drag.id) return;
+      drag.dx = event.clientX - drag.x;
+      const dy = (event.clientY - drag.y) * 0.2;
+      drag.card.style.transform = `translate(${drag.dx}px, ${dy}px) rotate(${drag.dx / 18}deg)`;
+    });
+
+    function endDrag(event, cancelled) {
+      if (!drag || event.pointerId !== drag.id) return;
+      const { card, dx, time } = drag;
+      drag = null;
+      card.classList.remove("is-dragging");
+      const speed = Math.abs(dx) / Math.max(1, performance.now() - time);
+
+      if (cancelled) layout();
+      else if (Math.abs(dx) > deckEl.offsetWidth * 0.25 || (Math.abs(dx) > 30 && speed > 0.6)) throwTop(Math.sign(dx));
+      else if (Math.abs(dx) < 6) throwTop(nextDirection); // um toque também passa à seguinte
+      else layout();
+    }
+
+    deckEl.addEventListener("pointerup", (event) => endDrag(event, false));
+    deckEl.addEventListener("pointercancel", (event) => endDrag(event, true));
+
+    layout();
+  }
+
+  /* ---------- Envelope da carta ---------- */
+
+  function setupEnvelope() {
+    const letter = config.carta || {};
+    const envelope = $("#envelope");
+    const button = $("#envelope-button");
+    const article = $("#letter");
+
+    $("#envelope-to").textContent = personalise(letter.envelope || "Para {nome}");
+    $("#envelope-seal").textContent = herName.charAt(0).toUpperCase();
 
     button.addEventListener("click", () => {
-      index += 1;
+      const reduced = prefersReducedMotion();
+      button.setAttribute("aria-expanded", "true");
+      envelope.classList.add("is-open");
 
-      if (index < messages.length) {
-        swapText(personalise(messages[index]), false);
-        countEl.textContent = `${String(index + 1).padStart(2, "0")} / ${String(messages.length).padStart(2, "0")}`;
-        button.textContent = likes.botaoSeguinte || "Mais uma";
-      } else if (index === messages.length) {
-        swapText(personalise(likes.final || "…"), false);
-        countEl.textContent = "";
-        button.textContent = likes.botaoRecomecar || "Ler outra vez";
-      } else {
-        index = -1;
-        swapText("…", true);
-        countEl.textContent = "";
-        button.textContent = likes.botaoInicio || "Diz-me";
-      }
+      // Aba abre, a carta espreita, o envelope sai e a carta desdobra-se
+      window.setTimeout(() => envelope.classList.add("is-leaving"), reduced ? 0 : 1500);
+      window.setTimeout(() => {
+        envelope.hidden = true;
+        article.hidden = false;
+        if (!reduced) article.classList.add("is-unfolding");
+        article.focus({ preventScroll: true });
+      }, reduced ? 150 : 1950);
+    }, { once: true });
+  }
 
-      updateDots();
+  /* ---------- Estrelas cadentes: um desejo por toque ---------- */
+
+  function setupWishes() {
+    const section = $("#surpresa");
+    const layer = $("#wishes");
+    const hint = $("#wish-hint");
+    const text = $("#wish-text");
+    const settings = config.surpresa || {};
+
+    if (prefersReducedMotion() || !settings.desejo) {
+      hint.hidden = true;
+      return;
+    }
+
+    text.textContent = personalise(settings.desejo);
+    section.classList.add("is-wishing");
+    let wishes = 0;
+
+    function addOnce(el) {
+      layer.appendChild(el);
+      el.addEventListener("animationend", () => el.remove(), { once: true });
+    }
+
+    section.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("a, button")) return;
+      const rect = section.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      // Cai sempre para o lado com mais espaço
+      const angle = x > rect.width / 2 ? 148 + Math.random() * 18 : 14 + Math.random() * 18;
+
+      const spark = document.createElement("span");
+      spark.className = "wish-spark";
+      spark.style.cssText = `--x:${x}px;--y:${y}px`;
+      addOnce(spark);
+
+      const star = document.createElement("span");
+      star.className = "shooting-star";
+      star.style.cssText = `--x:${x}px;--y:${y}px;--angle:${angle}deg`;
+      const trail = document.createElement("span");
+      trail.className = "shooting-star__trail";
+      trail.style.setProperty("--distance", `${220 + Math.random() * 120}px`);
+      star.appendChild(trail);
+      layer.appendChild(star);
+      trail.addEventListener("animationend", () => star.remove(), { once: true });
+
+      wishes += 1;
+      if (wishes === 1 && settings.desejoFeito) text.textContent = personalise(settings.desejoFeito);
     });
   }
 
@@ -522,16 +745,23 @@
     const revealEl = $("#surprise-reveal");
     const actions = $(".surprise__actions");
 
+    // Com constelação, a mensagem espera que as estrelas se formem
+    const start = constellation.hasName ? 3.2 : 0.5;
+    const caption = $("#constellation-caption");
+    caption.textContent = personalise(surprise.legendaConstelacao || "");
+    caption.style.setProperty("--delay", "2.6s");
+
     (surprise.mensagem || []).forEach((line, i) => {
       const p = document.createElement("p");
       p.textContent = personalise(line);
-      p.style.setProperty("--delay", `${0.5 + i * 0.7}s`);
+      p.style.setProperty("--delay", `${start + i * 0.7}s`);
       messageEl.appendChild(p);
     });
 
     const lineCount = (surprise.mensagem || []).length;
-    $(".surprise__note").style.setProperty("--delay", `${0.6 + lineCount * 0.7}s`);
-    $(".surprise__top").style.setProperty("--delay", `${1 + lineCount * 0.7}s`);
+    $(".surprise__note").style.setProperty("--delay", `${start + 0.1 + lineCount * 0.7}s`);
+    $(".surprise__wish").style.setProperty("--delay", `${start + 0.5 + lineCount * 0.7}s`);
+    $(".surprise__top").style.setProperty("--delay", `${start + 0.9 + lineCount * 0.7}s`);
 
     $("#surprise-button").addEventListener("click", () => {
       actions.classList.add("is-hidden");
@@ -542,6 +772,8 @@
         void revealEl.offsetWidth;
         revealEl.classList.add("is-shown");
         revealEl.focus({ preventScroll: true });
+        constellation.start();
+        setupWishes();
         if (!prefersReducedMotion()) petals.start();
       }, prefersReducedMotion() ? 0 : 380);
     }, { once: true });
@@ -621,6 +853,266 @@
         frame = requestAnimationFrame(tick);
       },
     };
+  })();
+
+  /* Constelação: o nome dela desenhado com estrelas ligadas por linhas.
+     Cada letra é desenhada num canvas invisível; escolhem-se pontos
+     espaçados dentro da letra e ligam-se pelo caminho mais curto. */
+  const constellation = (() => {
+    const canvas = $("#constellation-canvas");
+    const ctx = canvas.getContext("2d");
+    const name = personalise((config.surpresa || {}).constelacao || "").trim();
+    const FORM = 2200; // ms até as estrelas chegarem ao lugar
+    const LINK = 1800; // ms a desenhar as linhas
+    let stars = [];
+    let edges = [];
+    let width = 0;
+    let height = 0;
+    let startTime = 0;
+    let frame = 0;
+    let started = false;
+    let visible = true;
+
+    const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+    // Aleatório com semente: o mesmo nome dá sempre a mesma constelação
+    function seededRandom(text) {
+      let seed = [...text].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 2654435761), 1779033703) >>> 0;
+      return () => {
+        seed = (seed + 0x6d2b79f5) >>> 0;
+        let t = seed;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    let random = Math.random;
+    const distance2 = (a, b) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
+
+    // Árvore mínima (Prim): liga todos os pontos com as linhas mais curtas,
+    // pela ordem em que a árvore cresce — é essa a ordem do desenho.
+    function shortestLinks(points) {
+      const n = points.length;
+      const inTree = new Array(n).fill(false);
+      const best = new Array(n).fill(Infinity);
+      const from = new Array(n).fill(-1);
+      const links = [];
+      best[0] = 0;
+      for (let k = 0; k < n; k++) {
+        let u = -1;
+        for (let i = 0; i < n; i++) {
+          if (!inTree[i] && (u === -1 || best[i] < best[u])) u = i;
+        }
+        inTree[u] = true;
+        if (from[u] >= 0) links.push([from[u], u, best[u]]);
+        for (let v = 0; v < n; v++) {
+          if (inTree[v]) continue;
+          const d = distance2(points[u], points[v]);
+          if (d < best[v]) {
+            best[v] = d;
+            from[v] = u;
+          }
+        }
+      }
+      return links;
+    }
+
+    function layout() {
+      random = seededRandom(name);
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      const off = document.createElement("canvas");
+      off.width = Math.ceil(width);
+      off.height = Math.ceil(height);
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      // Fonte de traço uniforme: as letras ficam legíveis só com pontos e linhas
+      const family = 'Manrope, system-ui, sans-serif';
+
+      octx.font = `200 100px ${family}`;
+      const size = Math.min(height * 0.8, ((width * 0.92) / (octx.measureText(name).width || 1)) * 100);
+      octx.font = `200 ${size}px ${family}`;
+      const spacing = Math.max(7, size * 0.12);
+      const baseline = height / 2 + size * 0.28;
+      let x = (width - octx.measureText(name).width) / 2;
+
+      stars = [];
+      edges = [];
+
+      [...name].forEach((letter) => {
+        const letterWidth = octx.measureText(letter).width;
+        if (letter.trim()) {
+          octx.clearRect(0, 0, off.width, off.height);
+          octx.fillText(letter, x, baseline);
+          const left = Math.max(0, Math.floor(x - size * 0.2));
+          const right = Math.min(off.width, Math.ceil(x + letterWidth + size * 0.2));
+          const data = octx.getImageData(0, 0, off.width, off.height).data;
+
+          const candidates = [];
+          for (let py = 0; py < off.height; py += 1) {
+            for (let px = left; px < right; px += 1) {
+              if (data[(py * off.width + px) * 4 + 3] > 90) candidates.push([px, py]);
+            }
+          }
+          for (let i = candidates.length - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+          }
+
+          const picked = [];
+          const minDistance2 = spacing * spacing;
+          candidates.forEach((c) => {
+            if (picked.every((p) => distance2(p, c) >= minDistance2)) picked.push(c);
+          });
+
+          const offset = stars.length;
+          picked.forEach(([px, py]) => {
+            const bright = random() < 0.18;
+            stars.push({
+              x: px,
+              y: py,
+              fromX: random() * width,
+              fromY: random() * height,
+              radius: bright ? 2.2 + random() * 0.8 : 1 + random(),
+              bright,
+              delay: random() * 600,
+              phase: random() * Math.PI * 2,
+            });
+          });
+
+          const maxLink2 = (spacing * 2.6) ** 2;
+          const linked = new Set();
+          shortestLinks(picked).forEach(([a, b, d]) => {
+            if (d <= maxLink2) {
+              edges.push([offset + a, offset + b]);
+              linked.add(`${Math.min(a, b)}-${Math.max(a, b)}`);
+            }
+          });
+
+          // Liga também vizinhos muito próximos, para fechar letras como o "o"
+          const closeLink2 = (spacing * 1.45) ** 2;
+          picked.forEach((p, a) => {
+            picked.forEach((q, b) => {
+              if (b <= a || linked.has(`${a}-${b}`) || distance2(p, q) > closeLink2) return;
+              edges.push([offset + a, offset + b]);
+              linked.add(`${a}-${b}`);
+            });
+          });
+
+          // Duas pontas soltas perto uma da outra são um anel por fechar
+          const degree = new Array(picked.length).fill(0);
+          linked.forEach((key) => key.split("-").forEach((i) => { degree[i] += 1; }));
+          const ends = picked.map((_, i) => i).filter((i) => degree[i] === 1);
+          const gapLink2 = (spacing * 2.4) ** 2;
+          ends.forEach((a, i) => {
+            ends.slice(i + 1).forEach((b) => {
+              const key = `${Math.min(a, b)}-${Math.max(a, b)}`;
+              if (linked.has(key) || distance2(picked[a], picked[b]) > gapLink2) return;
+              edges.push([offset + a, offset + b]);
+              linked.add(key);
+            });
+          });
+        }
+        x += letterWidth;
+      });
+    }
+
+    function draw(time, twinkle) {
+      ctx.clearRect(0, 0, width, height);
+
+      // Linhas
+      const linkProgress = clamp01((time - FORM * 0.8) / LINK) * edges.length;
+      ctx.strokeStyle = "rgba(244, 182, 194, 0.42)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i < Math.min(edges.length, Math.ceil(linkProgress)); i++) {
+        const a = stars[edges[i][0]];
+        const b = stars[edges[i][1]];
+        const part = Math.min(1, linkProgress - i);
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(a.x + (b.x - a.x) * part, a.y + (b.y - a.y) * part);
+      }
+      ctx.stroke();
+
+      // Estrelas
+      stars.forEach((s) => {
+        const t = easeOut(clamp01((time - s.delay) / (FORM - 600)));
+        const x = s.fromX + (s.x - s.fromX) * t;
+        const y = s.fromY + (s.y - s.fromY) * t;
+        let alpha = 0.25 + 0.75 * t;
+        if (twinkle) alpha *= 0.78 + 0.22 * Math.sin(time / 650 + s.phase);
+
+        if (s.bright) {
+          ctx.globalAlpha = alpha * 0.12;
+          ctx.fillStyle = "#f4b6c2";
+          ctx.beginPath();
+          ctx.arc(x, y, s.radius * 2.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = "#fffdfd";
+        ctx.beginPath();
+        ctx.arc(x, y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function loop(now) {
+      draw(now - startTime, true);
+      frame = visible ? requestAnimationFrame(loop) : 0;
+    }
+
+    function resume() {
+      if (started && visible && !frame && !prefersReducedMotion()) frame = requestAnimationFrame(loop);
+    }
+
+    function start() {
+      if (!name) return;
+      canvas.setAttribute("aria-label", `Estrelas ligadas a desenhar o nome ${name}`);
+      const fontReady = document.fonts
+        ? document.fonts.load("200 100px Manrope").catch(() => {})
+        : Promise.resolve();
+
+      fontReady.then(() => {
+        layout();
+        started = true;
+        if (prefersReducedMotion()) {
+          draw(FORM + LINK * 2, false);
+          return;
+        }
+        startTime = performance.now();
+        resume();
+      });
+    }
+
+    if (!name) canvas.parentElement.hidden = true;
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        resume();
+      }).observe(canvas);
+    }
+
+    let resizeTimer = 0;
+    window.addEventListener("resize", () => {
+      if (!started) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        layout();
+        // Depois de redimensionar, mostra logo a constelação completa
+        startTime = performance.now() - (FORM + LINK);
+        draw(FORM + LINK * 2, false);
+      }, 200);
+    });
+
+    return { start, hasName: Boolean(name) };
   })();
 
   /* ---------- Música ---------- */
@@ -724,10 +1216,12 @@
   fillTexts();
   document.querySelectorAll(".stars").forEach((el) => scatterStars(el, window.innerWidth < 600 ? 50 : 90));
   setupIntro();
+  setupDaily();
   setupDay();
   renderGallery();
   setupLightbox();
   renderLetter();
+  setupEnvelope();
   setupLikes();
   setupSurprise();
   setupProgress();

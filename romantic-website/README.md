@@ -53,7 +53,15 @@ nome: "Ana",          // nome dela
 remetente: "Kenny",   // o teu nome (assinatura)
 ```
 
-Todo o texto (ecrã inicial, "Um dia na minha cabeça", legendas, carta, lista "o que mais gosto em ti", surpresa e rodapé) está nesse ficheiro, separado por secções. Onde estiver `{nome}`, o site coloca o nome dela automaticamente.
+Todo o texto (ecrã inicial, frase do dia, "Um dia na minha cabeça", legendas e notas atrás das fotos, carta, lista "o que mais gosto em ti", surpresa e rodapé) está nesse ficheiro, separado por secções. Onde estiver `{nome}`, o site coloca o nome dela automaticamente.
+
+Outras opções no mesmo ficheiro:
+- `fraseDoDia.frases`: lista de frases; o site mostra uma diferente por dia e recomeça no fim da lista.
+- `nota` em cada foto: mensagem escondida no verso do cartão. Sem `nota`, tocar na foto amplia-a.
+- `surpresa.constelacao`: texto desenhado com estrelas na surpresa (por defeito, o nome dela).
+- `carta.envelope` e `carta.dicaEnvelope`: o que está escrito no envelope e a dica por baixo.
+- `gosto.capa` e `gosto.dicaCapa`: a capa do baralho de cartões.
+- `surpresa.desejo` e `surpresa.desejoFeito`: o convite para tocar no céu e a resposta depois do primeiro desejo.
 
 ## 3. Música (opcional)
 

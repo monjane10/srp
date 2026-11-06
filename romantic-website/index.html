@@ -15,7 +15,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600&family=Parisienne&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@200;400;500;600&family=Parisienne&display=swap">
   <link rel="stylesheet" href="css/style.css">
 
   <script>document.documentElement.classList.replace("no-js", "js");</script>
@@ -73,6 +73,14 @@
         <p class="opening__dedication enter" data-fill="abertura.dedicatoria"></p>
         <h2 class="opening__title enter" id="opening-title" tabindex="-1" data-fill="abertura.titulo"></h2>
         <p class="opening__text enter" data-fill="abertura.texto"></p>
+        <aside class="daily enter" id="daily" aria-labelledby="daily-title">
+          <p class="daily__head">
+            <span class="daily__title" id="daily-title" data-fill="fraseDoDia.titulo"></span>
+            <span class="daily__date" id="daily-date"></span>
+          </p>
+          <p class="daily__text" id="daily-text"></p>
+          <p class="daily__foot" data-fill="fraseDoDia.rodape"></p>
+        </aside>
         <a class="scroll-cue enter" href="#dia">
           <span>Começar</span>
           <span class="scroll-cue__line" aria-hidden="true"></span>
@@ -127,7 +135,22 @@
         <h2 class="section__title" id="letter-title" data-fill="carta.titulo"></h2>
       </header>
 
-      <article class="letter" data-reveal>
+      <!-- A carta começa fechada num envelope -->
+      <div class="envelope" id="envelope" data-reveal>
+        <button class="envelope__button" id="envelope-button" type="button" aria-controls="letter" aria-expanded="false">
+          <span class="envelope__back" aria-hidden="true"></span>
+          <span class="envelope__paper" aria-hidden="true"></span>
+          <span class="envelope__front" aria-hidden="true">
+            <span class="envelope__to" id="envelope-to"></span>
+          </span>
+          <span class="envelope__flap" aria-hidden="true"></span>
+          <span class="envelope__seal" id="envelope-seal" aria-hidden="true"></span>
+          <span class="sr-only">Abrir a carta</span>
+        </button>
+        <p class="envelope__hint" data-fill="carta.dicaEnvelope"></p>
+      </div>
+
+      <article class="letter" id="letter" tabindex="-1" hidden>
         <p class="letter__greeting" data-fill="carta.saudacao"></p>
         <div class="letter__body" id="letter-body"></div>
         <footer class="letter__closing">
@@ -145,11 +168,9 @@
         <p class="section__lead" data-fill="gosto.subtitulo"></p>
       </header>
 
-      <div class="likes__card" data-reveal>
-        <span class="likes__quote" aria-hidden="true">“</span>
-        <p class="likes__message is-placeholder" id="likes-message" aria-live="polite">…</p>
-        <p class="likes__count" id="likes-count" aria-hidden="true"></p>
-      </div>
+      <!-- Baralho de cartões: desliza o de cima para ver o seguinte -->
+      <div class="deck" id="deck" data-reveal></div>
+      <p class="sr-only" id="likes-live" aria-live="polite"></p>
       <div class="likes__dots" id="likes-dots" aria-hidden="true"></div>
       <div class="likes__actions" data-reveal>
         <button class="btn btn--primary" id="likes-button" type="button"></button>
@@ -160,6 +181,7 @@
     <section class="section surprise" id="surpresa" aria-labelledby="surprise-title">
       <div class="stars" aria-hidden="true"></div>
       <canvas class="surprise__petals" id="petals" aria-hidden="true"></canvas>
+      <div class="wishes" id="wishes" aria-hidden="true"></div>
 
       <div class="surprise__inner">
         <header class="section__header section__header--center" data-reveal>
@@ -175,11 +197,16 @@
         </div>
 
         <div class="surprise__reveal" id="surprise-reveal" tabindex="-1" hidden>
-          <svg class="surprise__heart" viewBox="0 0 48 44" aria-hidden="true">
-            <path d="M24 41S3 28.6 3 14.5A10.5 10.5 0 0 1 24 9.3a10.5 10.5 0 0 1 21 5.2C45 28.6 24 41 24 41z"/>
-          </svg>
+          <figure class="constellation">
+            <canvas class="constellation__canvas" id="constellation-canvas" role="img"></canvas>
+            <figcaption class="constellation__caption" id="constellation-caption"></figcaption>
+          </figure>
           <div class="surprise__message" id="surprise-message"></div>
           <p class="surprise__note" data-fill="surpresa.notaFinal"></p>
+          <p class="surprise__wish" id="wish-hint" aria-live="polite">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/></svg>
+            <span id="wish-text"></span>
+          </p>
           <a class="surprise__top" href="#abertura">Voltar ao início</a>
         </div>
       </div>
