@@ -91,7 +91,7 @@ window.SITE_CONFIG = {
     rotulo: "10 · XI",
     antes: {
       titulo: "Falta pouco para o nosso primeiro mês",
-      subtitulo: "10 de novembro, à meia-noite em Maputo.",
+      subtitulo: "Estou a contar os segundos até ao nosso dia.",
     },
     hoje: {
       titulo: "Hoje faz um mês, {nome}.",
