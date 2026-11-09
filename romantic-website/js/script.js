@@ -168,6 +168,7 @@
 
     if (!settings.marco || Number.isNaN(target)) {
       section.hidden = true;
+      $("#month-chip").hidden = true;
       return;
     }
 
@@ -192,6 +193,7 @@
 
     const pad = (n) => String(n).padStart(2, "0");
     const DAY = 86400000;
+    const chip = $("#month-chip-text");
     let state = null;
     let celebrated = false;
 
@@ -226,6 +228,16 @@
       els.hours.textContent = pad(Math.floor((total % 86400) / 3600));
       els.minutes.textContent = pad(Math.floor((total % 3600) / 60));
       els.seconds.textContent = pad(total % 60);
+
+      if (chip) {
+        const clock = `${pad(Math.floor((total % 86400) / 3600))}:${pad(Math.floor((total % 3600) / 60))}:${pad(total % 60)}`;
+        const daysText = days ? `${days} ${days === 1 ? "dia" : "dias"} e ` : "";
+        chip.textContent = state === "antes"
+          ? `Faltam ${daysText}${clock} para o nosso primeiro mês`
+          : state === "hoje"
+            ? "Hoje faz um mês. Tenho uma coisa para ti, lá mais abaixo."
+            : `Juntos há ${days} ${days === 1 ? "dia" : "dias"}`;
+      }
     }
 
     function celebrate() {
@@ -263,47 +275,93 @@
 
   /* ---------- Um dia na minha cabeça ---------- */
 
-  // Cor do céu ao longo do dia: [minutos desde 00:00, topo, horizonte].
-  // Depois da meia-noite os minutos continuam a contar (02:00 = 1560).
+  // Cor do céu ao longo do dia em Maputo, em novembro:
+  // [minutos desde 00:00, topo, horizonte]. O sol nasce por volta das
+  // 05:00 e põe-se por volta das 18:15. Depois da meia-noite os minutos
+  // continuam a contar (02:00 = 1560).
+  const SUN_RISE = 300;   // 05:00
+  const SUN_SET = 1095;   // 18:15
+  const MOON_RISE = 1125; // 18:45
+  const MOON_SET = 1770;  // 05:30 do dia seguinte
+
   const SKY = [
-    [330, "#231c26", "#4a3442"],
-    [380, "#5b3f55", "#f4b6c2"],
-    [425, "#f9d3db", "#fff0f3"],
-    [790, "#fffdfd", "#fff0f3"],
-    [1070, "#f6c9cf", "#fbe0d6"],
-    [1150, "#6e4560", "#c97b8c"],
-    [1290, "#2a2130", "#3b2a3a"],
-    [1420, "#221c23", "#2f2531"],
-    [1580, "#17131a", "#241c26"],
+    [200, "#141017", "#1f1822"],  // madrugada funda
+    [255, "#1d1828", "#3a2a3e"],  // primeira claridade
+    [285, "#3a3150", "#b5707a"],  // hora azul, horizonte a aquecer
+    [305, "#6b5d80", "#f4a27c"],  // nascer do sol
+    [340, "#bcc3dc", "#fdd2b8"],  // logo a seguir
+    [420, "#dde6f2", "#fff1e8"],  // manhã
+    [760, "#eaf1fa", "#fffdfd"],  // meio do dia
+    [990, "#efece9", "#fde8d8"],  // tarde
+    [1065, "#b98a98", "#f6a77f"], // sol baixo
+    [1095, "#6e4d6e", "#ec8b6a"], // pôr do sol
+    [1125, "#3a2b47", "#8d5468"], // crepúsculo
+    [1170, "#231c2c", "#382838"], // anoitecer
+    [1420, "#1c1722", "#2a2130"], // noite
+    [1580, "#141017", "#1f1822"], // madrugada
   ];
 
   const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
   const mixRgb = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
   const rgb = (c) => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+  const rgba = (c, a) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
   const luminance = (c) => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
   const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
+  // O céu repete-se a cada 24 h (a madrugada liga-se à anterior).
   function skyAt(minutes) {
-    const last = SKY.length - 1;
-    if (minutes <= SKY[0][0]) return [hexToRgb(SKY[0][1]), hexToRgb(SKY[0][2])];
-    if (minutes >= SKY[last][0]) return [hexToRgb(SKY[last][1]), hexToRgb(SKY[last][2])];
-    const i = SKY.findIndex((stop) => stop[0] > minutes) - 1;
-    const [from, to] = [SKY[i], SKY[i + 1]];
-    const t = (minutes - from[0]) / (to[0] - from[0]);
+    let m = minutes;
+    while (m < SKY[0][0]) m += 1440;
+    while (m > SKY[0][0] + 1440) m -= 1440;
+    const stops = [...SKY, [SKY[0][0] + 1440, SKY[0][1], SKY[0][2]]];
+    const i = Math.max(0, stops.findIndex((stop) => stop[0] > m) - 1);
+    const [from, to] = [stops[i], stops[i + 1]];
+    const t = (m - from[0]) / (to[0] - from[0]);
     return [
       mixRgb(hexToRgb(from[1]), hexToRgb(to[1]), t),
       mixRgb(hexToRgb(from[2]), hexToRgb(to[2]), t),
     ];
   }
 
-  // Posição num arco: sobe de um lado, passa pelo topo e desce do outro.
-  function placeOnArc(el, minutes, rise, set) {
-    const t = (minutes - rise) / (set - rise);
-    const visible = t > 0 && t < 1;
-    const height = visible ? Math.sin(Math.PI * t) : 0;
-    el.style.setProperty("--x", `${8 + 84 * clamp01(t)}%`);
-    el.style.setProperty("--y", `${54 - height * 28}%`);
-    el.style.opacity = visible ? Math.min(1, height * 2.5).toFixed(2) : "0";
+  // Altura no céu (1 = ponto mais alto, 0 = horizonte, negativo = abaixo).
+  // Procura a passagem mais próxima, por isso a lua de ontem à noite
+  // também aparece de madrugada.
+  function arcAt(minutes, rise, set) {
+    const span = set - rise;
+    let best = null;
+    [-1440, 0, 1440].forEach((shift) => {
+      const t = (minutes - rise - shift) / span;
+      if (best === null || Math.abs(t - 0.5) < Math.abs(best - 0.5)) best = t;
+    });
+    const altitude = best >= 0 && best <= 1 ? Math.sin(Math.PI * best) : -Math.min(Math.abs(best < 0 ? best : best - 1) * 4, 1);
+    return { t: best, altitude };
+  }
+
+  // Coloca o astro no arco: nasce em baixo à esquerda (este) e desce à direita.
+  // Abaixo do horizonte sai do ecrã, como na vida real.
+  const HORIZON = 96; // % da altura do ecrã
+  function placeOnArc(el, minutes, rise, set, peak) {
+    const { t, altitude } = arcAt(minutes, rise, set);
+    el.style.setProperty("--x", `${(6 + 88 * Math.min(1.1, Math.max(-0.1, t))).toFixed(2)}%`);
+    el.style.setProperty("--y", `${(HORIZON - altitude * (HORIZON - peak)).toFixed(2)}%`);
+    el.style.opacity = altitude > -0.25 ? "1" : "0";
+    return { t, altitude };
+  }
+
+  // Sol laranja e maior perto do horizonte, branco-dourado lá em cima.
+  const SUN_LOW = { core: hexToRgb("#ffe0c2"), edge: hexToRgb("#f2804f"), glow: hexToRgb("#f27a4f") };
+  const SUN_HIGH = { core: hexToRgb("#fffdf6"), edge: hexToRgb("#ffe7b0"), glow: hexToRgb("#ffe6b4") };
+
+  function paintSun(el, sky, altitude, t) {
+    const k = clamp01(altitude / 0.35);
+    el.style.setProperty("--sun-core", rgb(mixRgb(SUN_LOW.core, SUN_HIGH.core, k)));
+    el.style.setProperty("--sun-edge", rgb(mixRgb(SUN_LOW.edge, SUN_HIGH.edge, k)));
+    el.style.setProperty("--sun-glow", rgba(mixRgb(SUN_LOW.glow, SUN_HIGH.glow, k), (0.55 - 0.15 * k).toFixed(2)));
+    el.style.setProperty("--sun-scale", (1.18 - 0.18 * k).toFixed(3));
+    // Brilho no horizonte: forte ao nascer/pôr do sol, nada ao meio-dia nem à noite.
+    const glow = altitude > -0.3 ? clamp01(1 - Math.abs(altitude - 0.02) / 0.3) : 0;
+    sky.style.setProperty("--horizon-glow", glow.toFixed(2));
+    sky.style.setProperty("--glow-x", `${(6 + 88 * clamp01(t)).toFixed(1)}%`);
   }
 
   function setupDay() {
@@ -320,6 +378,7 @@
     const sticky = section.querySelector(".day__sticky");
     const timeEl = $("#day-time");
     const momentEl = $("#day-moment");
+    const sky = section.querySelector(".day__sky");
     const sun = section.querySelector(".day__sun");
     const moon = section.querySelector(".day__moon");
 
@@ -383,8 +442,13 @@
       sticky.style.setProperty("--stars", clamp01((0.42 - light) / 0.22).toFixed(2));
       sticky.classList.toggle("is-dark", light < 0.55);
 
-      placeOnArc(sun, minutes, 350, 1160);
-      placeOnArc(moon, minutes, 1150, 1680);
+      const sunPos = placeOnArc(sun, minutes, SUN_RISE, SUN_SET, 16);
+      paintSun(sun, sky, sunPos.altitude, sunPos.t);
+      const moonPos = placeOnArc(moon, minutes, MOON_RISE, MOON_SET, 22);
+      // A lua inclina-se um pouco ao longo da noite.
+      moon.style.setProperty("--moon-tilt", `${(-25 + 50 * clamp01(moonPos.t)).toFixed(1)}deg`);
+      // De dia a lua não se vê; desaparece devagar com a claridade.
+      if (light > 0.5) moon.style.opacity = "0";
       timeEl.textContent = formatTime(minutes);
 
       const active = Math.round(position);

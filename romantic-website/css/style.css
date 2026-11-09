@@ -678,7 +678,44 @@ a { color: inherit; }
 .is-open .enter:nth-child(2) { transition-delay: 0.9s; }
 .is-open .enter:nth-child(3) { transition-delay: 1.05s; }
 .is-open .enter:nth-child(4) { transition-delay: 1.3s; }
-.is-open .enter:nth-child(5) { transition-delay: 1.5s; }
+.is-open .enter:nth-child(5) { transition-delay: 1.45s; }
+.is-open .enter:nth-child(6) { transition-delay: 1.6s; }
+
+/* Aviso da contagem do primeiro mês, na abertura */
+.month-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 1px solid rgba(201, 79, 112, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 253, 253, 0.7);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
+}
+
+.month-chip svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: var(--wine);
+}
+
+@media (hover: hover) {
+  .month-chip:hover { border-color: var(--wine); background: var(--paper); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .month-chip svg { animation: beat 1.6s var(--ease-in-out) infinite; }
+}
+
+@keyframes beat {
+  0%, 40%, 100% { transform: scale(1); }
+  20% { transform: scale(1.18); }
+}
 
 /* A frase de hoje */
 .daily {
@@ -733,8 +770,8 @@ a { color: inherit; }
 .month {
   overflow: hidden;
   background:
-    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(244, 182, 194, 0.28), transparent 70%),
-    var(--paper);
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(244, 182, 194, 0.35), transparent 70%),
+    var(--blush);
 }
 
 .month .section__number { font-style: normal; }
@@ -769,7 +806,7 @@ a { color: inherit; }
   padding: clamp(16px, 3vw, 24px) 6px clamp(12px, 2.4vw, 18px);
   border: 1px solid rgba(201, 79, 112, 0.2);
   border-radius: 20px;
-  background: rgba(255, 240, 243, 0.65);
+  background: rgba(255, 253, 253, 0.75);
 }
 
 .timer__value {
@@ -791,7 +828,7 @@ a { color: inherit; }
 
 .month.is-today .timer__unit {
   border-color: rgba(201, 79, 112, 0.4);
-  background: var(--blush);
+  background: var(--paper);
 }
 
 .month.is-today .timer__value { color: var(--wine); }
@@ -895,24 +932,42 @@ a { color: inherit; }
 .day__moon {
   position: absolute;
   left: var(--x, 50%);
-  top: var(--y, 50%);
+  top: var(--y, 120%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  will-change: left, top;
 }
 
+/* As cores do sol mudam com a altura: laranja no horizonte, quase branco ao meio-dia */
 .day__sun {
-  width: clamp(64px, 12vw, 110px);
+  width: calc(clamp(56px, 10vw, 96px) * var(--sun-scale, 1));
   aspect-ratio: 1;
-  background: radial-gradient(circle at 40% 40%, #fff8f2, #f7c2c4 70%);
-  box-shadow: 0 0 60px 24px rgba(247, 194, 196, 0.45);
+  background: radial-gradient(circle at 50% 50%, var(--sun-core, #fffaf0) 0 45%, var(--sun-edge, #ffe2a8) 72%, transparent 74%);
+  box-shadow: 0 0 80px 30px var(--sun-glow, rgba(255, 226, 168, 0.45));
+}
+
+/* Brilho do sol a espalhar-se no horizonte quando está baixo */
+.day__sky::before {
+  content: "";
+  position: absolute;
+  left: var(--glow-x, 50%);
+  bottom: -30vh;
+  width: 140vw;
+  height: 70vh;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 150, 100, 0.55), transparent);
+  opacity: var(--horizon-glow, 0);
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 /* Lua em quarto crescente: círculo transparente com uma "sombra" deslocada */
 .day__moon {
   width: clamp(40px, 7vw, 64px);
   aspect-ratio: 1;
-  box-shadow: 12px -8px 0 0 #fff0f3;
-  filter: drop-shadow(0 0 16px rgba(255, 240, 243, 0.35));
+  box-shadow: 12px -8px 0 0 #fff4e8;
+  filter: drop-shadow(0 0 18px rgba(255, 244, 232, 0.4));
+  transform: translate(-50%, -50%) rotate(var(--moon-tilt, 0deg));
 }
 
 .day__clock {

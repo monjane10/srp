@@ -88,7 +88,6 @@ window.SITE_CONFIG = {
   mes: {
     inicio: "2026-10-10T00:00:00+02:00",
     marco: "2026-11-10T00:00:00+02:00",
-    rotulo: "10 · XI",
     antes: {
       titulo: "Falta pouco para o nosso primeiro mês",
       subtitulo: "Estou a contar os segundos até ao nosso dia.",
@@ -122,10 +121,10 @@ window.SITE_CONFIG = {
     rotulo: "Um dia na minha cabeça",
     titulo: "Preciso de ser honesto contigo…",
     dica: "Continua a descer",
-    horaInicial: "05:40",
+    horaInicial: "04:20",
     momentoInicial: "Antes do amanhecer",
     cenas: [
-      { hora: "06:20", momento: "Amanhecer", texto: "Penso muito em ti. Mais do que alguma vez admito em voz alta." },
+      { hora: "05:05", momento: "Amanhecer", texto: "Penso muito em ti. Mais do que alguma vez admito em voz alta." },
       { hora: "07:05", momento: "Manhã", texto: "As minhas manhãs começam com o teu nome na cabeça." },
       { hora: "13:10", momento: "Durante o dia", texto: "Mesmo quando tento manter-me ocupado, tudo acaba por voltar a ti." },
       { hora: "17:50", momento: "Fim de tarde", texto: "Fico a imaginar o que estás a fazer, como te estás a sentir… e se também pensas em mim." },
