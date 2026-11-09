@@ -136,26 +136,72 @@
 
   /* ---------- A frase de hoje ---------- */
 
+  // Data de hoje em Maputo (ano, mês 1-12, dia), seja qual for o fuso do telemóvel.
+  function maputoToday() {
+    try {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Africa/Maputo", year: "numeric", month: "2-digit", day: "2-digit",
+      }).formatToParts(new Date());
+      const get = (type) => Number(parts.find((p) => p.type === type).value);
+      return { y: get("year"), m: get("month"), d: get("day") };
+    } catch (e) {
+      // Sem suporte para fusos: Maputo é sempre UTC+2 (não tem hora de verão).
+      const t = new Date(Date.now() + 2 * 3600000);
+      return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
+    }
+  }
+
   function setupDaily() {
     const settings = config.fraseDoDia || {};
     const phrases = settings.frases || [];
+    const specials = settings.mesversarios || [];
     const box = $("#daily");
+    const titleEl = $("#daily-title");
+    const defaultTitle = titleEl.textContent;
 
-    if (!phrases.length) {
+    if (!phrases.length && !specials.length) {
       box.hidden = true;
       return;
     }
 
-    // Conta os dias desde uma data fixa (na hora local), por isso a frase
-    // muda à meia-noite e é a mesma durante o dia inteiro.
-    const today = new Date();
-    const dayNumber = Math.floor(
-      (Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(2026, 0, 1)) / 86400000
-    );
-    const index = ((dayNumber % phrases.length) + phrases.length) % phrases.length;
+    const [startY, startM, startD] = String(settings.inicioNamoro || "").split("-").map(Number);
+    let shownKey = "";
 
-    $("#daily-text").textContent = personalise(phrases[index]);
-    $("#daily-date").textContent = today.toLocaleDateString("pt-PT", { day: "numeric", month: "long" });
+    function render() {
+      const today = maputoToday();
+      const key = `${today.y}-${today.m}-${today.d}`;
+      if (key === shownKey) return;
+      shownKey = key;
+
+      // Dia 10 (ou o dia em que começámos): quantos meses fazemos hoje?
+      let special = null;
+      if (startY && today.d === startD) {
+        const months = (today.y - startY) * 12 + (today.m - startM);
+        if (months >= 1 && months <= specials.length) special = specials[months - 1];
+      }
+
+      let text;
+      if (special) {
+        text = special.frase;
+        titleEl.textContent = personalise(special.titulo || defaultTitle);
+      } else {
+        // Conta os dias desde uma data fixa, por isso a frase muda à
+        // meia-noite e é a mesma durante o dia inteiro.
+        const dayNumber = Math.round((Date.UTC(today.y, today.m - 1, today.d) - Date.UTC(2026, 0, 1)) / 86400000);
+        const index = ((dayNumber % phrases.length) + phrases.length) % phrases.length;
+        text = phrases[index];
+        titleEl.textContent = defaultTitle;
+      }
+
+      box.classList.toggle("is-special", Boolean(special));
+      $("#daily-text").textContent = personalise(text);
+      $("#daily-date").textContent = new Date(Date.UTC(today.y, today.m - 1, today.d, 12))
+        .toLocaleDateString("pt-PT", { day: "numeric", month: "long", timeZone: "UTC" });
+    }
+
+    render();
+    // Se a página ficar aberta durante a meia-noite, a frase muda sozinha.
+    window.setInterval(render, 30000);
   }
 
   /* ---------- Um mês de nós — temporizador ---------- */

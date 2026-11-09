@@ -760,6 +760,17 @@ a { color: inherit; }
   text-wrap: balance;
 }
 
+/* Nos dias 10 a caixa fica mais especial */
+.daily.is-special {
+  border-color: rgba(201, 79, 112, 0.45);
+  background:
+    radial-gradient(ellipse 80% 120% at 100% 0%, rgba(244, 182, 194, 0.35), transparent 60%),
+    var(--paper);
+  box-shadow: 0 18px 40px -28px rgba(166, 60, 91, 0.45);
+}
+
+.daily.is-special .daily__title { color: var(--wine); }
+
 .daily__foot {
   font-size: 0.82rem;
   color: var(--ink-soft);

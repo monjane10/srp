@@ -78,6 +78,26 @@ window.SITE_CONFIG = {
       "Hoje e amanhã, continuo a escolher-te.",
       "Fecha os olhos por um segundo: estou a abraçar-te.",
     ],
+
+    /* Frases especiais para cada dia 10, até fazermos um ano.
+       Nesses dias substituem a frase normal. A primeira é a do 1.º mês
+       (10 de novembro de 2026), a última a de 1 ano (10 de outubro de 2027).
+       O dia muda à meia-noite de Maputo.  */
+    inicioNamoro: "2026-10-10",
+    mesversarios: [
+      { titulo: "Hoje faz um mês", frase: "Um mês contigo e já não sei como eram os meus dias antes de ti." },
+      { titulo: "Hoje fazem dois meses", frase: "Dois meses, e o teu nome continua a ser a minha parte preferida de cada dia." },
+      { titulo: "Hoje fazem três meses", frase: "Três meses de conversas que eu não quero que acabem nunca." },
+      { titulo: "Hoje fazem quatro meses", frase: "Quatro meses, e ainda fico sem jeito quando me sorris." },
+      { titulo: "Hoje fazem cinco meses", frase: "Cinco meses a descobrir que contigo tudo fica mais leve." },
+      { titulo: "Hoje faz meio ano", frase: "Meio ano, {nome}. E a vontade de te escolher só cresce." },
+      { titulo: "Hoje fazem sete meses", frase: "Sete meses. Tu já és casa, e eu gosto tanto de estar em casa." },
+      { titulo: "Hoje fazem oito meses", frase: "Oito meses de risos, de saudades e de ti a fazer-me feliz sem esforço nenhum." },
+      { titulo: "Hoje fazem nove meses", frase: "Nove meses depois, continuas a ser a primeira pessoa a quem quero contar tudo." },
+      { titulo: "Hoje fazem dez meses", frase: "Dez meses. Obrigado por cada conversa, cada abraço e cada dia ao teu lado." },
+      { titulo: "Hoje fazem onze meses", frase: "Onze meses. Falta só um para um ano inteiro de nós, e eu mal posso esperar." },
+      { titulo: "Hoje fazemos um ano", frase: "Um ano, {nome}. O melhor ano da minha vida tem o teu nome. Feliz primeiro ano, meu amor." },
+    ],
   },
 
   /* ---------- 2a+. Um mês de nós ----------
