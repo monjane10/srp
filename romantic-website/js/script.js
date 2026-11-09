@@ -158,6 +158,109 @@
     $("#daily-date").textContent = today.toLocaleDateString("pt-PT", { day: "numeric", month: "long" });
   }
 
+  /* ---------- Um mês de nós — temporizador ---------- */
+
+  function setupMonth() {
+    const settings = config.mes || {};
+    const section = $("#mes");
+    const start = Date.parse(settings.inicio);
+    const target = Date.parse(settings.marco);
+
+    if (!settings.marco || Number.isNaN(target)) {
+      section.hidden = true;
+      return;
+    }
+
+    const body = $("#month-body");
+    (settings.paragrafos || []).forEach((text) => {
+      const p = document.createElement("p");
+      p.textContent = personalise(text);
+      p.dataset.reveal = "";
+      body.appendChild(p);
+    });
+
+    const els = {
+      title: $("#month-title"),
+      lead: $("#month-lead"),
+      label: $("#timer-label"),
+      days: $("#timer-days"),
+      daysName: $("#timer-days-name"),
+      hours: $("#timer-hours"),
+      minutes: $("#timer-minutes"),
+      seconds: $("#timer-seconds"),
+    };
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const DAY = 86400000;
+    let state = null;
+    let celebrated = false;
+
+    function setState(next) {
+      if (next === state) return;
+      const previous = state;
+      state = next;
+      const texts = settings[next] || {};
+      els.title.textContent = personalise(texts.titulo || "");
+      els.lead.textContent = personalise(texts.subtitulo || "");
+      els.label.textContent = personalise(next === "antes" ? settings.rotuloAntes : settings.rotuloDepois);
+      section.classList.toggle("is-today", next === "hoje");
+      // Se a contagem chegar a zero com a página aberta, festeja logo.
+      if (previous === "antes" && next === "hoje") celebrate();
+    }
+
+    function render() {
+      const now = Date.now();
+      let diff;
+      if (now < target) {
+        setState("antes");
+        diff = target - now;
+      } else {
+        setState(now < target + DAY ? "hoje" : "depois");
+        diff = now - (Number.isNaN(start) ? target : start);
+      }
+
+      const total = Math.floor(diff / 1000);
+      const days = Math.floor(total / 86400);
+      els.days.textContent = days;
+      els.daysName.textContent = days === 1 ? "dia" : "dias";
+      els.hours.textContent = pad(Math.floor((total % 86400) / 3600));
+      els.minutes.textContent = pad(Math.floor((total % 3600) / 60));
+      els.seconds.textContent = pad(total % 60);
+    }
+
+    function celebrate() {
+      if (celebrated || prefersReducedMotion()) return;
+      celebrated = true;
+      const box = $("#month-hearts");
+      for (let i = 0; i < 28; i++) {
+        const heart = document.createElement("span");
+        heart.className = "month__heart";
+        heart.style.cssText =
+          `left:${(5 + Math.random() * 90).toFixed(1)}%;` +
+          `--size:${(12 + Math.random() * 18).toFixed(0)}px;` +
+          `--drift:${(-60 + Math.random() * 120).toFixed(0)}px;` +
+          `--duration:${(3.5 + Math.random() * 3).toFixed(2)}s;` +
+          `--delay:${(Math.random() * 2.5).toFixed(2)}s`;
+        heart.addEventListener("animationend", () => heart.remove());
+        box.appendChild(heart);
+      }
+    }
+
+    render();
+    window.setInterval(render, 1000);
+
+    // No dia, quando ela chega à secção, caem corações.
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting) && state === "hoje") {
+          celebrate();
+          observer.disconnect();
+        }
+      }, { threshold: 0.35 });
+      observer.observe(section);
+    }
+  }
+
   /* ---------- Um dia na minha cabeça ---------- */
 
   // Cor do céu ao longo do dia: [minutos desde 00:00, topo, horizonte].
@@ -1217,6 +1320,7 @@
   document.querySelectorAll(".stars").forEach((el) => scatterStars(el, window.innerWidth < 600 ? 50 : 90));
   setupIntro();
   setupDaily();
+  setupMonth();
   setupDay();
   renderGallery();
   setupLightbox();

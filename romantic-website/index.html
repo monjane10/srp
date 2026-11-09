@@ -58,7 +58,8 @@
   <!-- ============ NAVEGAÇÃO DISCRETA ============ -->
   <nav class="chapters" aria-label="Secções do presente">
     <a class="chapters__link" href="#abertura" data-label="Abertura"><span class="sr-only">Abertura</span></a>
-    <a class="chapters__link" href="#dia" data-label="Um dia na minha cabeça"><span class="sr-only">Um dia na minha cabeça</span></a>
+    <a class="chapters__link" href="#mes" data-label="Um mês de nós"><span class="sr-only">Um mês de nós</span></a>
+    <a class="chapters__link" href="#dia"data-label="Um dia na minha cabeça"><span class="sr-only">Um dia na minha cabeça</span></a>
     <a class="chapters__link" href="#galeria" data-label="Galeria"><span class="sr-only">Galeria</span></a>
     <a class="chapters__link" href="#carta" data-label="Carta"><span class="sr-only">Carta</span></a>
     <a class="chapters__link" href="#gosto" data-label="O que gosto em ti"><span class="sr-only">O que gosto em ti</span></a>
@@ -81,11 +82,37 @@
           <p class="daily__text" id="daily-text"></p>
           <p class="daily__foot" data-fill="fraseDoDia.rodape"></p>
         </aside>
-        <a class="scroll-cue enter" href="#dia">
+        <a class="scroll-cue enter" href="#mes">
           <span>Começar</span>
           <span class="scroll-cue__line" aria-hidden="true"></span>
         </a>
       </div>
+    </section>
+
+    <!-- ============ UM MÊS DE NÓS ============ -->
+    <section class="section month" id="mes" aria-labelledby="month-title">
+      <div class="month__hearts" id="month-hearts" aria-hidden="true"></div>
+
+      <header class="section__header section__header--center" data-reveal>
+        <p class="section__number" data-fill="mes.rotulo"></p>
+        <h2 class="section__title" id="month-title"></h2>
+        <p class="section__lead" id="month-lead"></p>
+      </header>
+
+      <div class="timer" data-reveal>
+        <p class="timer__label" id="timer-label"></p>
+        <div class="timer__units" role="timer" aria-live="off" aria-atomic="true" id="timer">
+          <div class="timer__unit"><span class="timer__value" id="timer-days">0</span><span class="timer__name" id="timer-days-name">dias</span></div>
+          <div class="timer__unit"><span class="timer__value" id="timer-hours">00</span><span class="timer__name">horas</span></div>
+          <div class="timer__unit"><span class="timer__value" id="timer-minutes">00</span><span class="timer__name">minutos</span></div>
+          <div class="timer__unit"><span class="timer__value" id="timer-seconds">00</span><span class="timer__name">segundos</span></div>
+        </div>
+      </div>
+
+      <article class="month__text" id="month-text">
+        <div class="month__body" id="month-body"></div>
+        <p class="month__closing" data-fill="mes.despedida" data-reveal></p>
+      </article>
     </section>
 
     <!-- ============ UM DIA NA MINHA CABEÇA ============

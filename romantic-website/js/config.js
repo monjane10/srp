@@ -80,6 +80,40 @@ window.SITE_CONFIG = {
     ],
   },
 
+  /* ---------- 2a+. Um mês de nós ----------
+     inicio: o dia em que começámos; marco: o momento da contagem.
+     O "+02:00" é a hora de Maputo, por isso a contagem é igual
+     em qualquer telemóvel, esteja ele onde estiver.
+     Antes do marco aparece a contagem decrescente; depois, o tempo juntos.  */
+  mes: {
+    inicio: "2026-10-10T00:00:00+02:00",
+    marco: "2026-11-10T00:00:00+02:00",
+    rotulo: "10 · XI",
+    antes: {
+      titulo: "Falta pouco para o nosso primeiro mês",
+      subtitulo: "10 de novembro, à meia-noite em Maputo.",
+    },
+    hoje: {
+      titulo: "Hoje faz um mês, {nome}.",
+      subtitulo: "Um mês desde o dia em que tudo ficou mais bonito.",
+    },
+    depois: {
+      titulo: "E o tempo continua a contar",
+      subtitulo: "Desde 10 de outubro, contigo.",
+    },
+    rotuloAntes: "Faltam",
+    rotuloDepois: "Juntos há",
+    paragrafos: [
+      "Há um mês, a minha vida ganhou uma cor nova. Ainda hoje não sei explicar como é que alguém consegue mudar tanto em tão pouco tempo. Só sei que foste tu.",
+      "Fazes-me feliz de uma maneira simples e verdadeira. Não é só nos grandes momentos: é a tua mensagem de bom dia, o teu riso do outro lado, a forma como dizes o meu nome. Contigo, a felicidade deixou de ser uma coisa que eu procurava e passou a ser um sítio onde moro.",
+      "E conversar contigo é das melhores partes do meu dia. Perco a noção das horas, os assuntos nunca acabam e, quando acabam, até o silêncio sabe bem. Contigo posso ser eu, sem medo e sem pressa. Há conversas que nos distraem; as tuas acalmam-me.",
+      "Quero que saibas o quão especial és para mim. És a primeira pessoa em quem penso quando acontece alguma coisa boa, e a última antes de adormecer. Não és só alguém de quem gosto: és alguém que eu escolho, com o coração inteiro, todos os dias.",
+      "Um mês parece pouco no calendário, mas coube tanto nele. Risos, saudades, descobertas, e esta certeza tranquila de que estou exactamente onde quero estar.",
+      "Obrigado por este primeiro mês, {nome}. Que seja só o primeiro de muitos, e que eu continue a fazer-te sorrir como tu me fazes sorrir a mim.",
+    ],
+    despedida: "Feliz um mês, meu amor.",
+  },
+
   /* ---------- 2b. Um dia na minha cabeça ----------
      Enquanto ela desce a página, o céu passa do amanhecer à noite.
      hora: define a cor do céu e a posição do sol/lua (formato "HH:MM").
