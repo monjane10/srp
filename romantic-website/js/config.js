@@ -9,13 +9,14 @@
 
 window.SITE_CONFIG = {
   // Nome dela. Se ficar vazio, o site usa "meu amor".
-  nome: "Leonor",
+  // Como lhe chamo. O nome verdadeiro dela (Leonor) só aparece nas descrições das fotos.
+  nome: "Baby",
 
   // O teu nome, usado na assinatura da carta e no rodapé.
   remetente: "Lourenço",
 
   // Título que aparece no separador do navegador.
-  tituloPagina: "Um pequeno universo para {nome}",
+  tituloPagina: "Um pequeno universo para a minha {nome}",
 
   /* ---------- 1. Ecrã inicial ---------- */
   intro: {
@@ -46,7 +47,7 @@ window.SITE_CONFIG = {
 
   /* ---------- 2. Abertura ---------- */
   abertura: {
-    dedicatoria: "Para {nome}",
+    dedicatoria: "Para a minha {nome}",
     titulo: "Voltaste. Eu sabia que voltavas.",
     texto:
       "Este universo cresce contigo. Desde a última vez, reescrevi quase tudo: " +
@@ -79,7 +80,7 @@ window.SITE_CONFIG = {
       "Contigo, até os dias comuns ficam bonitos.",
       "Que hoje alguém te trate com o carinho que tu dás aos outros.",
       "Se precisares de colo, já sabes onde está.",
-      "Tu és casa, {nome}.",
+      "Tu és casa, querida.",
       "Às vezes basta lembrar-me de ti para o dia mudar de cor.",
       "Acredito em ti, mesmo quando tu própria duvidas.",
       "Hoje é um bom dia para te lembrares de que és especial.",
@@ -162,7 +163,7 @@ window.SITE_CONFIG = {
           "Conclusão n.º 2: és ainda mais bonita do que nas fotografias. E nas fotografias já era difícil competir.",
           "Conclusão n.º 3: estou mais feliz. Os sintomas incluem sorrir para o telemóvel em público, ficar parvo quando dizes o meu nome e contar os dias até ao dia 10.",
           "Efeitos secundários: nenhum. Só uma vontade enorme de te ver.",
-          "Recomendação final: continuar. Por tempo indeterminado. Contigo, {nome}.",
+          "Recomendação final: continuar. Por tempo indeterminado. Contigo, meu amor.",
         ],
         despedida: "Feliz dois meses, meu amor. Assinado: o investigador principal.",
       },
@@ -182,7 +183,7 @@ window.SITE_CONFIG = {
     cenas: [
       { hora: "05:05", momento: "Amanhecer", texto: "Abro os olhos. Antes de me levantar, já fui ver se tinha mensagem tua." },
       { hora: "07:05", momento: "Manhã", texto: "Bom dia enviado. Fico a olhar para o ecrã à espera de resposta como quem espera o chapa." },
-      { hora: "13:10", momento: "Durante o dia", texto: "Alguém me conta uma coisa engraçada. A primeira coisa que penso: tenho de contar isto à {nome}." },
+      { hora: "13:10", momento: "Durante o dia", texto: "Alguém me conta uma coisa engraçada. A primeira coisa que penso: tenho de contar isto à minha {nome}." },
       { hora: "17:50", momento: "Fim de tarde", texto: "O céu fica cor-de-laranja e eu penso que tu ias gostar de ver isto." },
       { hora: "23:40", momento: "Noite", texto: "Digo que vou dormir. Continuo a falar contigo mais uma hora. Não me arrependo de nada." },
       { hora: "02:14", momento: "Madrugada", texto: "E se acordar a meio da noite, já sabes em quem penso primeiro." },
@@ -201,35 +202,35 @@ window.SITE_CONFIG = {
     fotos: [
       {
         src: "assets/images/baby.jpeg",
-        alt: "{nome} com o cabelo natural e um casaco de ganga, a mandar um beijinho",
+        alt: "Leonor com o cabelo natural e um casaco de ganga, a mandar um beijinho",
         legenda: "Prova n.º 1: és perigosa de cabelo natural.",
         nota: "Esse beijinho veio para mim. Não aceito devoluções.",
         foco: "55% 40%",
       },
       {
         src: "assets/images/babe1.jpeg",
-        alt: "{nome} com tranças e casaco branco, a fazer uma careta divertida",
+        alt: "Leonor com tranças e casaco branco, a fazer uma careta divertida",
         legenda: "Prova n.º 2: até as caretas te ficam bem. Isto não é justo.",
         nota: "Guardo esta para os dias em que preciso de me rir.",
         foco: "50% 45%",
       },
       {
         src: "assets/images/babe2.jpeg",
-        alt: "Selfie de {nome} com tranças e camisa azul",
+        alt: "Selfie da Leonor com tranças e camisa azul",
         legenda: "Prova n.º 3: o azul também te escolheu.",
         nota: "Se eu fosse esta câmara, também não queria desligar.",
         foco: "65% 45%",
       },
       {
         src: "assets/images/baby2.jpeg",
-        alt: "{nome} com tranças e casaco branco, a acenar para a câmara",
+        alt: "Leonor com tranças e casaco branco, a acenar para a câmara",
         legenda: "Prova n.º 4: um aceno teu e eu já estou do teu lado da rua.",
-        nota: "Olá, {nome}. Sim, estou a sorrir outra vez.",
+        nota: "Olá, querida. Sim, estou a sorrir outra vez.",
         foco: "50% 42%",
       },
       {
         src: "assets/images/babe.jpeg",
-        alt: "{nome} a sorrir, de pé, encostada a uma parede de azulejos cor de laranja",
+        alt: "Leonor a sorrir, de pé, encostada a uma parede de azulejos cor de laranja",
         legenda: "Prova n.º 5: o sorriso que decidiu o caso.",
         nota: "Veredicto final: a pessoa mais bonita da cidade. Sem direito a recurso.",
         foco: "45% 30%",
@@ -240,7 +241,7 @@ window.SITE_CONFIG = {
   /* ---------- 4. Carta de amor ---------- */
   carta: {
     titulo: "Coisas que ainda não te tinha dito",
-    saudacao: "{nome},",
+    saudacao: "Minha {nome},",
     paragrafos: [
       "Já te escrevi uma carta, eu sei. Mas guardei algumas coisas para uma segunda, porque são pequenas demais para dizer em voz alta e grandes demais para ficarem só comigo.",
       "Confesso que releio as nossas conversas antigas. Não todas. Só as que me fazem sorrir sozinho no meio de outras pessoas, que afinal são quase todas.",
@@ -251,7 +252,7 @@ window.SITE_CONFIG = {
     ],
     despedida: "Com o coração numa mão e o telemóvel na outra,",
     // O que está escrito no envelope e a dica por baixo dele.
-    envelope: "Para {nome} · carta n.º 2",
+    envelope: "Para a minha {nome} · carta n.º 2",
     dicaEnvelope: "Esta é nova. Toca para abrir.",
     // Se "remetente" estiver vazio, aparece este texto como assinatura.
     assinaturaAlternativa: "quem mais te admira",
