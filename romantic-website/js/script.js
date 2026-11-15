@@ -993,126 +993,6 @@
     }, { once: true });
   }
 
-  /* ---------- Quiz "Quanto me conheces?" ---------- */
-
-  function setupQuiz() {
-    const settings = config.quiz || {};
-    const questions = (settings.perguntas || []).filter((q) => q && q.opcoes && q.opcoes.length);
-    const card = $("#quiz-card");
-
-    if (!questions.length) {
-      $("#quiz").hidden = true;
-      document.querySelector('.chapters__link[href="#quiz"]').hidden = true;
-      return;
-    }
-
-    let current = 0;
-    let score = 0;
-
-    const el = (tag, className, text) => {
-      const node = document.createElement(tag);
-      if (className) node.className = className;
-      if (text != null) node.textContent = text;
-      return node;
-    };
-
-    function focusHeading(node) {
-      node.tabIndex = -1;
-      node.focus({ preventScroll: true });
-    }
-
-    function showQuestion() {
-      const q = questions[current];
-      card.textContent = "";
-      card.classList.remove("is-result");
-
-      const head = el("div", "quiz__head");
-      head.append(
-        el("p", "quiz__count", `Pergunta ${current + 1} de ${questions.length}`),
-        el("p", "quiz__score", plural(score, "certa", "certas"))
-      );
-      const bar = el("div", "quiz__bar");
-      const fill = el("span");
-      fill.style.transform = `scaleX(${current / questions.length})`;
-      bar.appendChild(fill);
-
-      const title = el("h3", "quiz__question", personalise(q.pergunta));
-      const options = el("div", "quiz__options");
-      const feedback = el("p", "quiz__feedback");
-      feedback.setAttribute("aria-live", "polite");
-      const next = el("button", "btn btn--primary quiz__next",
-        personalise(current === questions.length - 1 ? settings.botaoResultado : settings.botaoSeguinte));
-      next.type = "button";
-      next.hidden = true;
-
-      const buttons = q.opcoes.map((text, i) => {
-        const button = el("button", "quiz__option", personalise(text));
-        button.type = "button";
-        button.addEventListener("click", () => {
-          const right = i === q.certa;
-          if (right) score += 1;
-          buttons.forEach((b, j) => {
-            b.disabled = true;
-            if (j === q.certa) b.classList.add("is-right");
-          });
-          if (!right) button.classList.add("is-wrong");
-          card.classList.add(right ? "is-correct" : "is-incorrect");
-          feedback.textContent = personalise(right ? q.acertou : q.errou);
-          feedback.classList.add(right ? "is-right" : "is-wrong");
-          head.lastChild.textContent = plural(score, "certa", "certas");
-          next.hidden = false;
-          next.focus({ preventScroll: true });
-        });
-        options.appendChild(button);
-        return button;
-      });
-
-      next.addEventListener("click", () => {
-        card.classList.remove("is-correct", "is-incorrect");
-        current += 1;
-        if (current < questions.length) showQuestion();
-        else showResult();
-      });
-
-      card.append(head, bar, title, options, feedback, next);
-      card.classList.remove("is-entering");
-      void card.offsetWidth; // reinicia a animação de entrada
-      card.classList.add("is-entering");
-      if (current > 0) focusHeading(title);
-    }
-
-    function showResult() {
-      const results = (settings.resultados || []).slice().sort((a, b) => b.minimo - a.minimo);
-      const result = results.find((r) => score >= r.minimo) || {};
-      card.textContent = "";
-      card.classList.add("is-result");
-
-      const total = el("p", "quiz__total");
-      total.append(el("span", "", String(score)), el("small", "", `/${questions.length}`));
-      const title = el("h3", "quiz__question", personalise(result.titulo || ""));
-      const text = el("p", "quiz__result", personalise(result.texto || ""));
-      card.append(total, title, text);
-      if (settings.premio) card.appendChild(el("p", "quiz__prize", personalise(settings.premio)));
-
-      const again = el("button", "btn quiz__again", personalise(settings.botaoRepetir || "Jogar outra vez"));
-      again.type = "button";
-      again.addEventListener("click", () => {
-        current = 0;
-        score = 0;
-        showQuestion();
-        focusHeading(card.querySelector(".quiz__question"));
-      });
-      card.appendChild(again);
-
-      card.classList.remove("is-entering");
-      void card.offsetWidth;
-      card.classList.add("is-entering");
-      focusHeading(title);
-    }
-
-    showQuestion();
-  }
-
   /* ---------- A carta na minha voz ---------- */
 
   function setupVoice() {
@@ -1724,7 +1604,6 @@
   setupEnvelope();
   setupVoice();
   setupLikes();
-  setupQuiz();
   setupSurprise();
   setupProgress();
   setupChapters();
