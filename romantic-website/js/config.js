@@ -33,25 +33,25 @@ window.SITE_CONFIG = {
        e {meses} ("dois meses", nos dias 10).  */
     regresso: {
       sempreRegresso: true,
-      aviso: "Bem-vinda de volta",
-      titulo: "{nome}, que bom que voltaste.",
-      subtitulo: "Faltam {dias} para fazermos {proximo}. Até lá, este cantinho continua aqui à tua espera.",
-      subtituloAmanha: "Amanhã fazemos {proximo}. Volta cá à meia-noite.",
-      subtituloHoje: "Hoje fazemos {meses}. Há uma carta nova para ti, lá mais abaixo.",
+      aviso: "Achas que já leste tudo?",
+      titulo: "{nome}, mudei umas coisas enquanto não estavas a ver.",
+      subtitulo: "Palavras novas, provas novas, uma carta nova. E faltam {dias} para fazermos {proximo}.",
+      subtituloAmanha: "Amanhã fazemos {proximo}. Eu já estou acordado à espera da meia-noite.",
+      subtituloHoje: "Hoje fazemos {meses}. Escrevi-te uma carta nova, está lá mais abaixo.",
       // Para os dias 10 em que ainda não escrevi carta nova.
-      subtituloHojeSemCarta: "Hoje fazemos {meses}. Obrigado por cada um destes dias.",
-      botao: "Entrar",
+      subtituloHojeSemCarta: "Hoje fazemos {meses}. E eu continuo a achar que tive uma sorte enorme.",
+      botao: "Ver o que mudou",
     },
   },
 
   /* ---------- 2. Abertura ---------- */
   abertura: {
     dedicatoria: "Para {nome}",
-    titulo: "Um pequeno universo criado especialmente para ti.",
+    titulo: "Voltaste. Eu sabia que voltavas.",
     texto:
-      "Não é um site qualquer. É um sítio onde guardei o que sinto por ti, " +
-      "com calma e com cuidado, para que possas voltar aqui sempre que " +
-      "precisares de te lembrar do quanto és importante.",
+      "Este universo cresce contigo. Desde a última vez, reescrevi quase tudo: " +
+      "há um diário, um tribunal, umas confissões e uma surpresa diferente. " +
+      "Lê devagar, que eu escrevi devagar.",
   },
 
   /* ---------- 2a. A frase de hoje ----------
@@ -125,17 +125,17 @@ window.SITE_CONFIG = {
   mes: {
     inicio: "2026-10-10T00:00:00+02:00",
     espera: {
-      titulo: "A contar os dias até fazermos {proximo}",
-      subtitulo: "Cada dia contigo é mais um que eu escolheria outra vez.",
+      titulo: "Quem é que está a contar os dias?",
+      subtitulo: "Eu. Estou eu. Faltam {dias} para fazermos {proximo}.",
       contagem: "Faltam",
     },
     hoje: {
       titulo: "Hoje fazemos {meses}, {nome}.",
-      subtitulo: "Mais um mês desde o dia em que tudo ficou mais bonito.",
+      subtitulo: "Podes dizer a toda a gente. Eu já disse.",
       contagem: "Juntos há",
     },
     // Linha pequena por baixo da contagem.
-    juntos: "Juntos há {total}",
+    juntos: "Juntos há {total}. Ainda não chega.",
 
     /* Uma carta para cada mês. Aparece a do mês mais recente;
        a do mês seguinte só aparece quando chegar o dia.  */
@@ -155,15 +155,16 @@ window.SITE_CONFIG = {
       },
       {
         mes: 2,
-        rotulo: "A carta dos nossos dois meses",
+        rotulo: "Relatório oficial dos nossos dois meses",
         paragrafos: [
-          "Dois meses. Parece pouco quando o digo em voz alta, mas quando penso em tudo o que já vivemos, sinto que te conheço há muito mais tempo.",
-          "Neste mês fiquei a conhecer-te melhor: as tuas manias, os teus silêncios, o que te faz rir sem parar e o que te deixa pensativa. E quanto mais te conheço, mais gosto de ti. Não era suposto ser assim tão fácil, mas contigo é.",
-          "As nossas conversas continuam a ser o melhor do meu dia. Já não são novidade, são casa: aquele sítio onde chego cansado e de onde saio mais leve.",
-          "Obrigado pela paciência, pelo carinho e por me deixares ver-te como és. Prometo continuar a cuidar disto que estamos a construir, com calma e com vontade.",
-          "Venha o terceiro mês, {nome}. E o quarto. E todos os que tu quiseres.",
+          "Fiz as contas. Em dois meses: 61 dias, umas quantas mil mensagens, demasiados «vou dormir» que não eram verdade e zero dias em que não pensei em ti.",
+          "Conclusão n.º 1: falar contigo continua a ser a melhor parte do meu dia. O estudo foi rigoroso e repetido todas as noites, às vezes até de madrugada.",
+          "Conclusão n.º 2: és ainda mais bonita do que nas fotografias. E nas fotografias já era difícil competir.",
+          "Conclusão n.º 3: estou mais feliz. Os sintomas incluem sorrir para o telemóvel em público, ficar parvo quando dizes o meu nome e contar os dias até ao dia 10.",
+          "Efeitos secundários: nenhum. Só uma vontade enorme de te ver.",
+          "Recomendação final: continuar. Por tempo indeterminado. Contigo, {nome}.",
         ],
-        despedida: "Feliz dois meses, meu amor.",
+        despedida: "Feliz dois meses, meu amor. Assinado: o investigador principal.",
       },
     ],
   },
@@ -174,17 +175,17 @@ window.SITE_CONFIG = {
      As horas devem seguir em frente; depois da meia-noite usa "00:30", "02:14"…  */
   dia: {
     rotulo: "Um dia na minha cabeça",
-    titulo: "Preciso de ser honesto contigo…",
-    dica: "Continua a descer",
+    titulo: "Diário de um dia normal (spoiler: és tu o dia todo)",
+    dica: "Desce e acompanha o meu dia",
     horaInicial: "04:20",
-    momentoInicial: "Antes do amanhecer",
+    momentoInicial: "Ainda está escuro",
     cenas: [
-      { hora: "05:05", momento: "Amanhecer", texto: "Penso muito em ti. Mais do que alguma vez admito em voz alta." },
-      { hora: "07:05", momento: "Manhã", texto: "As minhas manhãs começam com o teu nome na cabeça." },
-      { hora: "13:10", momento: "Durante o dia", texto: "Mesmo quando tento manter-me ocupado, tudo acaba por voltar a ti." },
-      { hora: "17:50", momento: "Fim de tarde", texto: "Fico a imaginar o que estás a fazer, como te estás a sentir… e se também pensas em mim." },
-      { hora: "23:40", momento: "Noite", texto: "E as minhas noites terminam com pensamentos sobre ti que não me deixam dormir." },
-      { hora: "02:14", momento: "Madrugada", texto: "Porque a minha mente nunca se afasta de ti. De alguma forma, és sempre tu." },
+      { hora: "05:05", momento: "Amanhecer", texto: "Abro os olhos. Antes de me levantar, já fui ver se tinha mensagem tua." },
+      { hora: "07:05", momento: "Manhã", texto: "Bom dia enviado. Fico a olhar para o ecrã à espera de resposta como quem espera o chapa." },
+      { hora: "13:10", momento: "Durante o dia", texto: "Alguém me conta uma coisa engraçada. A primeira coisa que penso: tenho de contar isto à {nome}." },
+      { hora: "17:50", momento: "Fim de tarde", texto: "O céu fica cor-de-laranja e eu penso que tu ias gostar de ver isto." },
+      { hora: "23:40", momento: "Noite", texto: "Digo que vou dormir. Continuo a falar contigo mais uma hora. Não me arrependo de nada." },
+      { hora: "02:14", momento: "Madrugada", texto: "E se acordar a meio da noite, já sabes em quem penso primeiro." },
     ],
   },
 
@@ -195,42 +196,42 @@ window.SITE_CONFIG = {
      nota: mensagem escondida atrás da foto (aparece quando ela toca para a virar)
      foco: parte da foto que deve ficar visível quando é recortada  */
   galeria: {
-    titulo: "A minha galeria favorita tem o teu nome",
-    subtitulo: "Toca numa fotografia para a virar: há uma nota escondida atrás de cada uma.",
+    titulo: "Provas de que és injustamente bonita",
+    subtitulo: "Cinco provas, um veredicto. Toca em cada fotografia para leres o que o júri escreveu atrás.",
     fotos: [
       {
         src: "assets/images/baby.jpeg",
         alt: "{nome} com o cabelo natural e um casaco de ganga, a mandar um beijinho",
-        legenda: "Cada versão tua acaba sempre por ser a minha favorita.",
-        nota: "Esse beijinho fica comigo. Está decidido.",
+        legenda: "Prova n.º 1: és perigosa de cabelo natural.",
+        nota: "Esse beijinho veio para mim. Não aceito devoluções.",
         foco: "55% 40%",
       },
       {
         src: "assets/images/babe1.jpeg",
         alt: "{nome} com tranças e casaco branco, a fazer uma careta divertida",
-        legenda: "Até a fazer caretas consegues ser o que de mais bonito vejo.",
-        nota: "Ninguém fica tão bonita a fazer caretas. Só tu.",
+        legenda: "Prova n.º 2: até as caretas te ficam bem. Isto não é justo.",
+        nota: "Guardo esta para os dias em que preciso de me rir.",
         foco: "50% 45%",
       },
       {
         src: "assets/images/babe2.jpeg",
         alt: "Selfie de {nome} com tranças e camisa azul",
-        legenda: "Charme natural, sem esforço nenhum.",
-        nota: "Olho para esta foto e sorrio sem dar conta.",
+        legenda: "Prova n.º 3: o azul também te escolheu.",
+        nota: "Se eu fosse esta câmara, também não queria desligar.",
         foco: "65% 45%",
       },
       {
         src: "assets/images/baby2.jpeg",
         alt: "{nome} com tranças e casaco branco, a acenar para a câmara",
-        legenda: "Um aceno teu e eu já estou a sorrir.",
-        nota: "Olá para ti também, {nome}.",
+        legenda: "Prova n.º 4: um aceno teu e eu já estou do teu lado da rua.",
+        nota: "Olá, {nome}. Sim, estou a sorrir outra vez.",
         foco: "50% 42%",
       },
       {
         src: "assets/images/babe.jpeg",
         alt: "{nome} a sorrir, de pé, encostada a uma parede de azulejos cor de laranja",
-        legenda: "Esse sorriso tem o poder de mudar o meu dia inteiro.",
-        nota: "Se me perguntassem quem és, mostrava esta: alguém que ilumina o sítio onde está.",
+        legenda: "Prova n.º 5: o sorriso que decidiu o caso.",
+        nota: "Veredicto final: a pessoa mais bonita da cidade. Sem direito a recurso.",
         foco: "45% 30%",
       },
     ],
@@ -238,49 +239,46 @@ window.SITE_CONFIG = {
 
   /* ---------- 4. Carta de amor ---------- */
   carta: {
-    titulo: "Há coisas que quero que saibas…",
+    titulo: "Coisas que ainda não te tinha dito",
     saudacao: "{nome},",
     paragrafos: [
-      "Queria encontrar uma forma diferente de te dizer o que sinto. As palavras do dia-a-dia às vezes parecem pequenas demais para isso, por isso decidi construir-te este cantinho.",
-      "Quero que saibas que tens um lugar muito especial na minha vida. Não é só pelo que fazes por mim — é pela pessoa que és. A tua forma de estar, de rir, de cuidar de quem gostas.",
-      "Admiro-te mais do que talvez consiga mostrar. Admiro a tua força, a tua sensibilidade e essa maneira muito tua de tornar tudo mais leve, até quando o dia não ajuda.",
-      "Contigo percebi que a felicidade está muitas vezes nas coisas simples: uma conversa sem pressa, uma mensagem tua quando menos espero, um sorriso teu que me apanha desprevenido.",
-      "Não te vou prometer uma vida perfeita, porque isso não existe. Mas prometo estar presente, ouvir-te, respeitar-te e continuar a escolher-te todos os dias, com a mesma vontade.",
-      "Quero continuar a construir contigo uma história bonita — feita de paciência, de carinho e de muitos momentos que ainda nem imaginamos.",
-      "Obrigado por existires. E obrigado por me deixares fazer parte da tua vida.",
+      "Já te escrevi uma carta, eu sei. Mas guardei algumas coisas para uma segunda, porque são pequenas demais para dizer em voz alta e grandes demais para ficarem só comigo.",
+      "Confesso que releio as nossas conversas antigas. Não todas. Só as que me fazem sorrir sozinho no meio de outras pessoas, que afinal são quase todas.",
+      "Confesso que às vezes ensaio na cabeça o que te vou dizer. E que tu, na vida real, és sempre melhor do que no ensaio.",
+      "Confesso que tenho medo de poucas coisas, mas uma delas é deixar de te fazer rir. Por isso ando sempre com uma piada de reserva.",
+      "Confesso que, quando me perguntam como estou, a resposta depende muito de já termos falado nesse dia.",
+      "E a última, que já nem é segredo: és a melhor coisa que me aconteceu este ano. E o ano ainda nem acabou.",
     ],
-    despedida: "Com todo o meu carinho,",
+    despedida: "Com o coração numa mão e o telemóvel na outra,",
     // O que está escrito no envelope e a dica por baixo dele.
-    envelope: "Para {nome}",
-    dicaEnvelope: "Toca no envelope para abrir",
+    envelope: "Para {nome} · carta n.º 2",
+    dicaEnvelope: "Esta é nova. Toca para abrir.",
     // Se "remetente" estiver vazio, aparece este texto como assinatura.
     assinaturaAlternativa: "quem mais te admira",
   },
 
   /* ---------- 5. "Sabes o que mais gosto em ti?" ---------- */
   gosto: {
-    titulo: "Sabes o que mais gosto em ti?",
-    subtitulo: "Tenho uma lista. Carrega no botão e vai descobrindo, uma de cada vez.",
+    titulo: "Sabes o que mais gosto em ti? (parte 2)",
+    subtitulo: "A primeira lista acabou. Esta é nova, e também não é a última.",
     // Capa do baralho de cartões (o número de mensagens aparece em grande).
-    capa: "coisas que gosto em ti",
+    capa: "coisas novas que gosto em ti",
     dicaCapa: "Desliza para o lado",
-    botaoInicio: "Diz-me",
+    botaoInicio: "Mostra-me",
     botaoSeguinte: "Mais uma",
     botaoRecomecar: "Ler outra vez",
     mensagens: [
-      "Gosto da forma como consegues tornar os meus dias diferentes, mesmo sem dares conta.",
-      "Admiro a pessoa que és, mesmo nas pequenas coisas em que mais ninguém repara.",
-      "Há detalhes teus que talvez nem percebas, mas que tornam a tua presença especial.",
-      "Gosto do teu sorriso quando ele chega aos olhos. É impossível não sorrir de volta.",
-      "Gosto de como és tu própria, sem precisares de provar nada a ninguém.",
-      "Gosto da paz que sinto quando estou contigo. É rara, e é tua.",
-      "Gosto das caretas que fazes nas fotografias. Confesso que guardo todas.",
-      "Gosto que fiques linda de tranças, de cabelo natural, de qualquer maneira.",
-      "Admiro a tua força. Mesmo cansada, continuas a ser gentil com quem está à tua volta.",
-      "Gosto que, ao teu lado, até o silêncio seja confortável.",
-      "Gosto, acima de tudo, de seres exactamente quem és.",
+      "Gosto que uma conversa contigo comece com «olá» e acabe três horas depois sem sabermos como.",
+      "Gosto de ver o teu nome a aparecer no meu ecrã. É a minha notificação preferida.",
+      "Gosto que tenhas mil versões, de tranças, de cabelo natural, séria ou a fazer caretas, e que eu goste de todas.",
+      "Gosto que me dês vontade de te contar tudo, até as coisas aborrecidas do meu dia.",
+      "Gosto do poder que tens de mudar o meu humor com uma única mensagem. É quase injusto.",
+      "Gosto que, contigo, eu não precise de fingir que sou mais interessante do que sou.",
+      "Gosto de imaginar as coisas que ainda vamos fazer juntos.",
+      "Gosto de como dizes o meu nome. Soa melhor quando és tu.",
+      "Gosto que sejas tu. É a resposta mais curta e a mais verdadeira.",
     ],
-    final: "E isto é só o começo da lista.",
+    final: "Continua no próximo mês.",
   },
 
   /* ---------- 6. Surpresa final ---------- */
@@ -288,16 +286,17 @@ window.SITE_CONFIG = {
     // Nome desenhado com estrelas quando ela descobre a surpresa.
     constelacao: "{nome}",
     legendaConstelacao: "Constelação {nome}",
-    titulo: "E ainda tenho uma surpresa para ti…",
-    subtitulo: "Guardei o mais importante para o fim.",
-    botao: "Descobrir a surpresa",
+    titulo: "A surpresa mudou. Queres ver?",
+    subtitulo: "Da última vez disse-te que te escolhia outra vez. Continua a ser verdade, mas tenho uma coisa para acrescentar.",
+    botao: "Mostrar a surpresa nova",
     // Cada linha aparece como um parágrafo separado.
     mensagem: [
-      "Se pudesse escolher outra vez, escolhia-te outra vez.",
-      "E outra. E todas as vezes.",
+      "Se o universo me desse um desejo, eu não o gastava.",
+      "Já tenho o que queria.",
+      "Por isso este céu fica para ti. Pede tu.",
       "Amo-te, {nome}.",
     ],
-    notaFinal: "Este cantinho é teu. Volta sempre que precisares de te lembrar do quanto és amada.",
+    notaFinal: "Este universo vai continuar a mudar. Volta no dia 10.",
     // Depois da surpresa, cada toque no céu lança uma estrela cadente.
     desejo: "Toca no céu e pede um desejo.",
     desejoFeito: "Pedido guardado. O céu é todo teu, pede outro.",
