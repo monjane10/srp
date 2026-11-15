@@ -51,7 +51,7 @@ window.SITE_CONFIG = {
     titulo: "Voltaste. Eu sabia que voltavas.",
     texto:
       "Este universo cresce contigo. Desde a última vez, reescrevi quase tudo: " +
-      "há um diário, um tribunal, umas confissões e uma surpresa diferente. " +
+      "há um diário, um tribunal, uma carta nova e uma surpresa diferente. " +
       "Lê devagar, que eu escrevi devagar.",
   },
 
@@ -240,17 +240,17 @@ window.SITE_CONFIG = {
 
   /* ---------- 4. Carta de amor ---------- */
   carta: {
-    titulo: "Coisas que ainda não te tinha dito",
+    titulo: "Uma carta só porque sim",
     saudacao: "Minha {nome},",
     paragrafos: [
-      "Já te escrevi uma carta, eu sei. Mas guardei algumas coisas para uma segunda, porque são pequenas demais para dizer em voz alta e grandes demais para ficarem só comigo.",
-      "Confesso que releio as nossas conversas antigas. Não todas. Só as que me fazem sorrir sozinho no meio de outras pessoas, que afinal são quase todas.",
-      "Confesso que às vezes ensaio na cabeça o que te vou dizer. E que tu, na vida real, és sempre melhor do que no ensaio.",
-      "Confesso que tenho medo de poucas coisas, mas uma delas é deixar de te fazer rir. Por isso ando sempre com uma piada de reserva.",
-      "Confesso que, quando me perguntam como estou, a resposta depende muito de já termos falado nesse dia.",
-      "E a última, que já nem é segredo: és a melhor coisa que me aconteceu este ano. E o ano ainda nem acabou.",
+      "Esta carta não tem nenhuma data especial. Escrevi-a só porque estava a pensar em ti, e quando penso em ti fico sempre com vontade de te dizer alguma coisa.",
+      "Gosto muito de passar tempo contigo. Não importa o que estamos a fazer: a falar de tudo, a rir de nada, ou só juntos sem dizer grande coisa. O tempo contigo passa depressa demais, e eu fico sempre a querer mais um bocadinho.",
+      "A tua presença faz-me bem. Fico mais calmo, mais leve, mais eu. Há dias em que chego cansado ou com a cabeça cheia, e basta estar contigo para tudo ficar mais simples.",
+      "E tenho saudades tuas. Muitas. Às vezes ainda nem nos despedimos e eu já estou com saudades. Dou por mim a lembrar-me do teu riso, de coisas que disseste, da forma como olhas para mim, e a contar o tempo até te voltar a ver.",
+      "Não sei se te digo isto vezes suficientes, por isso fica aqui escrito: gosto de ti, gosto de estar contigo e gosto de quem sou quando estou ao teu lado.",
+      "Até já, minha {nome}. E que seja mesmo já.",
     ],
-    despedida: "Com o coração numa mão e o telemóvel na outra,",
+    despedida: "Cheio de saudades tuas,",
     // O que está escrito no envelope e a dica por baixo dele.
     envelope: "Para a minha {nome} · carta n.º 2",
     dicaEnvelope: "Esta é nova. Toca para abrir.",
