@@ -648,8 +648,6 @@
     photos.forEach((photo, index) => {
       const figure = document.createElement("figure");
       figure.className = "photo";
-      figure.dataset.reveal = "";
-      figure.style.setProperty("--delay", `${(index % 2) * 0.12}s`);
 
       const frame = document.createElement("div");
       frame.className = "photo__frame";
@@ -728,13 +726,92 @@
 
       gallery.appendChild(figure);
       loadInto(front, img, photo.src);
-      reveal(figure);
     });
 
     if (photos.length < 2) {
       $("#lightbox-prev").hidden = true;
       $("#lightbox-next").hidden = true;
     }
+  }
+
+  /* ---------- Galeria na horizontal ----------
+     A secção tem a altura necessária para que, ao descer, a fila de
+     fotografias deslize da direita para a esquerda o comprimento exacto. */
+
+  function setupGalleryScroll() {
+    const section = $("#galeria");
+    const sticky = $("#gallery-sticky");
+    const track = $("#gallery-track");
+    const counter = $("#gallery-counter");
+    const progressBar = $("#gallery-progress");
+    const figures = [...track.querySelectorAll(".photo")];
+    const word = personalise((config.galeria && config.galeria.contador) || "");
+    const pad = (n) => String(n).padStart(2, "0");
+
+    let distance = 0;
+    let centres = [];
+    let ticking = false;
+    let current = -1;
+
+    function measure() {
+      track.style.transform = "none";
+      const width = sticky.clientWidth;
+      distance = Math.max(0, track.scrollWidth - width);
+      section.style.height = `${sticky.clientHeight + distance}px`;
+      // Posição (dentro da fila) em que cada fotografia fica centrada no ecrã
+      centres = figures.map((f) => f.offsetLeft + f.offsetWidth / 2 - width / 2);
+      update();
+    }
+
+    function update() {
+      ticking = false;
+      const scrollable = section.offsetHeight - sticky.clientHeight;
+      const progress = scrollable > 0 ? clamp01(-section.getBoundingClientRect().top / scrollable) : 0;
+      // Cada prova fica uns instantes parada ao centro antes de seguir.
+      const stops = [0, ...centres.map((c) => Math.min(Math.max(c, 0), distance))];
+      const segment = progress * (stops.length - 1);
+      const i = Math.min(Math.floor(segment), stops.length - 2);
+      const t = clamp01((segment - i - 0.2) / 0.6); // 20% parada de cada lado
+      const eased = t * t * (3 - 2 * t);
+      const x = stops.length > 1 ? stops[i] + (stops[i + 1] - stops[i]) * eased : 0;
+      track.style.transform = `translate3d(${-x}px, 0, 0)`;
+      progressBar.style.transform = `scaleX(${progress})`;
+
+      // Qual fotografia está mais perto do centro?
+      let nearest = 0;
+      centres.forEach((c, i) => { if (Math.abs(c - x) < Math.abs(centres[nearest] - x)) nearest = i; });
+      const onPhotos = centres.length && x > centres[0] - sticky.clientWidth * 0.45;
+      section.classList.toggle("is-on-photos", Boolean(onPhotos));
+      if (nearest !== current) {
+        current = nearest;
+        counter.textContent = `${word} ${pad(nearest + 1)} / ${pad(figures.length)}`.trim();
+        figures.forEach((f, i) => f.classList.toggle("is-current", i === nearest));
+      }
+    }
+
+    const requestUpdate = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    // Com o teclado: ao chegar a uma fotografia, desce até ela ficar centrada
+    // (em vez de o navegador tentar deslizar a fila por conta própria).
+    track.addEventListener("focusin", (event) => {
+      const figure = event.target.closest(".photo");
+      sticky.scrollLeft = 0;
+      if (!figure || !distance) return;
+      const target = centres[figures.indexOf(figure)];
+      const scrollable = section.offsetHeight - sticky.clientHeight;
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: top + clamp01(target / distance) * scrollable, behavior: "auto" });
+    });
+
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    measure();
   }
 
   function showPhoto(index) {
@@ -1599,6 +1676,7 @@
   setupMonth();
   setupDay();
   renderGallery();
+  setupGalleryScroll();
   setupLightbox();
   renderLetter();
   setupEnvelope();

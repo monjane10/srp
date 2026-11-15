@@ -132,13 +132,28 @@
     </section>
 
     <!-- ============ GALERIA ============ -->
-    <section class="section gallery-section" id="galeria" aria-labelledby="gallery-title">
-      <header class="section__header" data-reveal>
-        <p class="section__number">II</p>
-        <h2 class="section__title" id="gallery-title" data-fill="galeria.titulo"></h2>
-        <p class="section__lead" data-fill="galeria.subtitulo"></p>
-      </header>
-      <div class="gallery" id="gallery"></div>
+    <section class="gallery-section" id="galeria" aria-labelledby="gallery-title">
+      <!-- A secção é alta e o conteúdo fica parado: descer faz as provas
+           passarem da direita para a esquerda. -->
+      <div class="gallery__sticky" id="gallery-sticky">
+        <div class="gallery__track" id="gallery-track">
+          <header class="gallery__intro">
+            <p class="section__number">II</p>
+            <h2 class="section__title" id="gallery-title" data-fill="galeria.titulo"></h2>
+            <p class="section__lead" data-fill="galeria.subtitulo"></p>
+            <p class="gallery__hint" aria-hidden="true">
+              <span data-fill="galeria.dica"></span>
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </p>
+          </header>
+          <div class="gallery" id="gallery"></div>
+        </div>
+
+        <div class="gallery__footer" aria-hidden="true">
+          <p class="gallery__counter" id="gallery-counter"></p>
+          <span class="gallery__progress"><span id="gallery-progress"></span></span>
+        </div>
+      </div>
     </section>
 
     <!-- ============ CARTA ============ -->

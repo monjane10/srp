@@ -1150,25 +1150,147 @@ a { color: inherit; }
   .day__dots { justify-content: flex-start; left: var(--gutter); }
 }
 
-/* ---------- Galeria ---------- */
+/* ---------- Galeria (na horizontal) ---------- */
 
-.gallery-section { background: var(--paper); }
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px 14px;
-  max-width: 1120px;
-  margin: 0 auto;
+.gallery-section {
+  position: relative;
+  height: 400vh; /* o JavaScript acerta a altura exacta */
+  background: var(--paper);
 }
 
-.photo { margin: 0; }
+.gallery__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.gallery__track {
+  display: flex;
+  align-items: center;
+  gap: clamp(36px, 7vw, 110px);
+  height: 100%;
+  width: max-content;
+  /* Margens: o título começa encostado à esquerda e a última prova acaba centrada */
+  padding: 0 calc((100vw - var(--photo-w)) / 2) 0 var(--gutter);
+  will-change: transform;
+  --photo-w: min(78vw, 50svh);
+}
+
+.gallery__intro {
+  flex: none;
+  display: grid;
+  gap: 14px;
+  width: min(84vw, 520px);
+}
+
+.gallery__hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wine-deep);
+}
+
+.gallery__hint svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gallery__hint svg { animation: nudge-x 1.8s var(--ease-in-out) infinite; }
+}
+
+@keyframes nudge-x {
+  50% { transform: translateX(6px); }
+}
+
+.gallery {
+  display: flex;
+  align-items: center;
+  gap: clamp(36px, 7vw, 110px);
+}
+
+.photo {
+  flex: none;
+  width: var(--photo-w);
+  margin: 0;
+  transform: rotate(var(--tilt, -1.5deg));
+  transition: transform 0.8s var(--ease), opacity 0.8s var(--ease);
+  opacity: 0.55;
+}
+
+/* Fichas ligeiramente tortas, como provas espalhadas numa mesa */
+.photo:nth-child(even) { --tilt: 1.8deg; margin-top: 4svh; }
+.photo:nth-child(3n) { --tilt: -0.8deg; margin-top: -3svh; }
+
+.photo.is-current {
+  opacity: 1;
+  transform: rotate(0deg) scale(1.02);
+}
+
+.gallery__footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(26px, calc(env(safe-area-inset-bottom) + 18px));
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  pointer-events: none;
+}
+
+.gallery-section.is-on-photos .gallery__footer { opacity: 1; }
+
+.gallery__counter {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--wine-deep);
+}
+
+.gallery__progress {
+  width: min(180px, 40vw);
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(201, 79, 112, 0.18);
+  overflow: hidden;
+}
+
+/* No telemóvel o botão da música fica no canto: o contador vai para a esquerda */
+@media (max-width: 599px) {
+  .gallery__footer { justify-items: start; left: var(--gutter); }
+}
+
+.gallery__progress span {
+  display: block;
+  height: 100%;
+  background: var(--wine);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+
 
 /* Cartão que se vira: frente com a foto, verso com uma nota */
 .photo__frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
   perspective: 1400px;
   container-type: inline-size;
 }
@@ -1319,39 +1441,6 @@ a { color: inherit; }
   .photo__frame:not(.is-flipped):hover .photo__zoom,
   .photo__zoom:focus-visible,
   .photo__flip:focus-visible + .photo__zoom { opacity: 1; transform: none; }
-}
-
-/* Telemóvel: uma grande, duas lado a lado, e repete */
-@media (max-width: 759px) {
-  .photo:nth-child(3n + 1) { grid-column: span 2; }
-  .photo:nth-child(3n + 1) .photo__frame { aspect-ratio: 4 / 5; }
-  .photo:last-child:nth-child(3n + 2) { grid-column: span 2; }
-  .photo:last-child:nth-child(3n + 2) .photo__frame { aspect-ratio: 4 / 5; }
-  .photo:nth-child(3n + 2):not(:last-child) .photo__caption,
-  .photo:nth-child(3n + 3) .photo__caption { font-size: 0.98rem; }
-}
-
-/* Ecrãs maiores: composição editorial em 12 colunas */
-@media (min-width: 760px) {
-  .gallery {
-    grid-template-columns: repeat(12, 1fr);
-    gap: clamp(48px, 6vw, 88px) clamp(20px, 2.4vw, 32px);
-    align-items: center;
-  }
-  .photo { grid-column: span 4; }
-
-  .photo:nth-child(5n + 1) { grid-column: span 7; }
-  .photo:nth-child(5n + 1) .photo__frame { aspect-ratio: 4 / 5; }
-
-  .photo:nth-child(5n + 2) { grid-column: span 5; }
-  .photo:nth-child(5n + 2) .photo__frame { aspect-ratio: 3 / 4; }
-
-  .photo:nth-child(5n + 3) { align-self: start; }
-
-  .photo:nth-child(5n + 4) .photo__frame { aspect-ratio: 1 / 1; }
-
-  .photo:nth-child(5n + 5) { align-self: end; }
-  .photo:nth-child(5n + 5) .photo__frame { aspect-ratio: 3 / 5; }
 }
 
 /* ---------- Fotografia ampliada ---------- */

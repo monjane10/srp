@@ -199,6 +199,10 @@ window.SITE_CONFIG = {
   galeria: {
     titulo: "Provas de que és injustamente bonita",
     subtitulo: "Cinco provas, um veredicto. Toca em cada fotografia para leres o que o júri escreveu atrás.",
+    // Aparece por baixo do título, a explicar que as provas vêm da direita.
+    dica: "Continua a descer",
+    // Palavra antes do número no contador ("Prova 3 / 5").
+    contador: "Prova",
     fotos: [
       {
         src: "assets/images/baby.jpeg",
