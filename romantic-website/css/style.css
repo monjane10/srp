@@ -1860,6 +1860,37 @@ a { color: inherit; }
 }
 
 .surprise .section__number { color: var(--rose); }
+
+/* Lua em quarto crescente, com um halo suave à volta */
+.surprise__moon {
+  position: absolute;
+  top: clamp(56px, 10vh, 110px);
+  right: clamp(24px, 12vw, 180px);
+  width: clamp(54px, 9vw, 96px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 240, 230, 0.16) 0%, rgba(255, 240, 230, 0.05) 45%, transparent 70%);
+  box-shadow: 0 0 120px 40px rgba(255, 236, 225, 0.06);
+  pointer-events: none;
+}
+
+.surprise__moon span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  /* O crescente é a "sombra" de um círculo transparente */
+  box-shadow: inset clamp(9px, 1.6vw, 16px) clamp(-10px, -1vw, -6px) 0 0 #fff4e8;
+  filter: drop-shadow(0 0 14px rgba(255, 244, 232, 0.45));
+  transform: rotate(-18deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .surprise__moon { animation: moon-float 9s var(--ease-in-out) infinite alternate; }
+}
+
+@keyframes moon-float {
+  to { transform: translateY(10px); }
+}
 .surprise .stars { pointer-events: none; }
 .surprise .section__lead { color: rgba(255, 253, 253, 0.68); }
 

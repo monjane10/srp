@@ -294,13 +294,11 @@ window.SITE_CONFIG = {
     // Cada linha aparece como um parágrafo separado.
     mensagem: [
       "Escrevi no céu para não haver dúvidas.",
-      "Se o universo me desse um desejo, eu não o gastava. Já tenho o que queria.",
-      "Por isso este céu fica para ti, {nome}. Pede tu.",
     ],
-    notaFinal: "Este universo vai continuar a mudar. Volta no dia 10.",
+    notaFinal: "",
     // Depois da surpresa, cada toque no céu lança uma estrela cadente.
     desejo: "Toca no céu e pede um desejo.",
-    desejoFeito: "Pedido guardado. O céu é todo teu, pede outro.",
+    desejoFeito: "",
   },
 
   /* ---------- 7. Música (opcional) ----------
