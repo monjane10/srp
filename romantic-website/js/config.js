@@ -285,6 +285,82 @@ window.SITE_CONFIG = {
     final: "Continua no próximo mês.",
   },
 
+  /* ---------- 5b. Quiz "Quanto me conheces?" ----------
+     certa: posição da resposta certa na lista de opções (a primeira é 0).
+     acertou / errou: o que aparece depois de ela escolher.
+     resultados: escolhe-se o primeiro cujo "minimo" de acertos ela atingiu.  */
+  quiz: {
+    titulo: "Quanto me conheces?",
+    subtitulo: "Oito perguntas. Não vale perguntar a ninguém.",
+    botaoSeguinte: "Próxima pergunta",
+    botaoResultado: "Ver o resultado",
+    botaoRepetir: "Jogar outra vez",
+    perguntas: [
+      {
+        pergunta: "Qual é a minha parte preferida do dia?",
+        opcoes: ["Acordar cedo", "A hora do almoço", "Quando falo contigo", "Ir dormir"],
+        certa: 2,
+        acertou: "Óbvio. Até a hora do almoço perde.",
+        errou: "Não. É quando falo contigo. Sempre.",
+      },
+      {
+        pergunta: "Quando digo «vou dormir», quanto tempo demoro a ir mesmo?",
+        opcoes: ["Cinco minutos", "Vou logo", "Mais uma hora a falar contigo", "Nunca digo isso"],
+        certa: 2,
+        acertou: "Conheces-me bem demais.",
+        errou: "Sabes que não. Fico sempre mais uma hora.",
+      },
+      {
+        pergunta: "O que me faz sorrir para o telemóvel no meio de toda a gente?",
+        opcoes: ["Memes", "As notícias", "Uma mensagem tua", "O saldo"],
+        certa: 2,
+        acertou: "Exacto. Já fui apanhado várias vezes.",
+        errou: "Nada disso. És tu. Sempre tu.",
+      },
+      {
+        pergunta: "Qual destas fotografias tuas é a minha preferida?",
+        opcoes: ["A do beijinho", "A da careta", "A do sorriso nos azulejos", "Todas"],
+        certa: 3,
+        acertou: "Claro que são todas. Não me faças escolher.",
+        errou: "Quase. Mas a resposta certa é: todas.",
+      },
+      {
+        pergunta: "Quantas vezes penso em ti por dia?",
+        opcoes: ["Uma", "Três", "Dez", "Já perdi a conta"],
+        certa: 3,
+        acertou: "Perdi a conta logo no primeiro dia.",
+        errou: "Muito mais do que isso. Já perdi a conta.",
+      },
+      {
+        pergunta: "Em que dia começou tudo?",
+        opcoes: ["1 de outubro", "10 de outubro", "10 de novembro", "14 de fevereiro"],
+        certa: 1,
+        acertou: "A data mais importante do meu calendário.",
+        errou: "Foi a 10 de outubro! Vou fingir que não vi isto.",
+      },
+      {
+        pergunta: "O que sinto quando não estamos juntos?",
+        opcoes: ["Nada de especial", "Alívio", "Saudades, muitas", "Sono"],
+        certa: 2,
+        acertou: "Muitas. Já te tinha dito na carta.",
+        errou: "Errado! São saudades, Baby. Muitas.",
+      },
+      {
+        pergunta: "Se eu pudesse pedir um desejo, o que pedia?",
+        opcoes: ["Dinheiro", "Uma viagem", "Nada, já te tenho a ti", "Mais horas de sono"],
+        certa: 2,
+        acertou: "Isso mesmo. O desejo já está cumprido.",
+        errou: "Nada disso. Já te tenho a ti, não preciso de mais.",
+      },
+    ],
+    resultados: [
+      { minimo: 8, titulo: "Conheces-me de cor", texto: "Oito em oito. Também, não admira: és tu que estás sempre na minha cabeça." },
+      { minimo: 5, titulo: "Conheces-me muito bem", texto: "As que falhaste, explico-te pessoalmente. Com calma." },
+      { minimo: 0, titulo: "Temos de passar mais tempo juntos", texto: "E eu não me importo nada. Quando é que te vejo?" },
+    ],
+    premio: "Prémio: um abraço comprido. Para reclamar comigo.",
+  },
+
   /* ---------- 6. Surpresa final ---------- */
   surpresa: {
     // Frase desenhada com estrelas quando ela descobre a surpresa.
