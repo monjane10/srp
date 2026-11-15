@@ -1448,6 +1448,97 @@ a { color: inherit; }
   from { opacity: 0; }
 }
 
+/* Leitor da carta na minha voz */
+.voice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 30px;
+  padding: 10px 18px 10px 10px;
+  border: 1px solid rgba(201, 79, 112, 0.22);
+  border-radius: 999px;
+  background: var(--blush);
+}
+
+.voice[hidden] { display: none; }
+
+.voice__button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--wine);
+  color: var(--paper);
+  cursor: pointer;
+  transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+@media (hover: hover) {
+  .voice__button:hover { background: var(--wine-deep); transform: scale(1.05); }
+}
+
+.voice__icon {
+  grid-area: 1 / 1;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.voice__icon--pause,
+.voice.is-playing .voice__icon--play { display: none; }
+.voice.is-playing .voice__icon--pause { display: block; }
+
+.voice__info {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.voice__label {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.voice__track {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(201, 79, 112, 0.18);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Área de toque maior do que a barra visível */
+.voice__track::before {
+  content: "";
+  position: absolute;
+  inset: -10px 0;
+}
+
+.voice__progress {
+  position: absolute;
+  inset: 0;
+  background: var(--wine);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s linear;
+}
+
+.voice__time {
+  flex: none;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
 /* ---------- Carta ---------- */
 
 .letter-section { background: var(--blush); }

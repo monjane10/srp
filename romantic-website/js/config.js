@@ -251,9 +251,12 @@ window.SITE_CONFIG = {
       "Até já, minha {nome}. E que seja mesmo já.",
     ],
     despedida: "Cheio de saudades tuas,",
+    // Gravação da carta na minha voz (vazio = sem leitor).
+    audio: "assets/audio/carta-2.m4a",
+    audioTexto: "Ouve esta carta na minha voz",
     // O que está escrito no envelope e a dica por baixo dele.
     envelope: "Para a minha {nome} · carta n.º 2",
-    dicaEnvelope: "Esta é nova. Toca para abrir.",
+    dicaEnvelope: "Esta é nova, e tem a minha voz lá dentro. Toca para abrir.",
     // Se "remetente" estiver vazio, aparece este texto como assinatura.
     assinaturaAlternativa: "quem mais te admira",
   },

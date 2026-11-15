@@ -164,6 +164,18 @@
       </div>
 
       <article class="letter" id="letter" tabindex="-1" hidden>
+        <div class="voice" id="voice" hidden>
+          <button class="voice__button" id="voice-button" type="button" aria-pressed="false" aria-label="Ouvir a carta">
+            <svg class="voice__icon voice__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+            <svg class="voice__icon voice__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+          </button>
+          <div class="voice__info">
+            <span class="voice__label" id="voice-label"></span>
+            <span class="voice__track" id="voice-track" aria-hidden="true"><span class="voice__progress" id="voice-progress"></span></span>
+          </div>
+          <span class="voice__time" id="voice-time"></span>
+          <audio id="voice-audio" preload="metadata"></audio>
+        </div>
         <p class="letter__greeting" data-fill="carta.saudacao"></p>
         <div class="letter__body" id="letter-body"></div>
         <footer class="letter__closing">

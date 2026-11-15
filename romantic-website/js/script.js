@@ -993,6 +993,73 @@
     }, { once: true });
   }
 
+  /* ---------- A carta na minha voz ---------- */
+
+  function setupVoice() {
+    const letter = config.carta || {};
+    const box = $("#voice");
+    if (!letter.audio) return;
+
+    const audio = $("#voice-audio");
+    const button = $("#voice-button");
+    const progress = $("#voice-progress");
+    const timeEl = $("#voice-time");
+    const track = $("#voice-track");
+    let musicWasPlaying = false;
+
+    const format = (s) => {
+      const t = Math.max(0, Math.round(s || 0));
+      return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+    };
+
+    $("#voice-label").textContent = personalise(letter.audioTexto || "Ouve esta carta na minha voz");
+    audio.src = letter.audio;
+    box.hidden = false;
+
+    function render() {
+      const playing = !audio.paused && !audio.ended;
+      box.classList.toggle("is-playing", playing);
+      button.setAttribute("aria-pressed", String(playing));
+      button.setAttribute("aria-label", playing ? "Pausar a leitura" : "Ouvir a carta");
+      const duration = audio.duration || 0;
+      progress.style.transform = `scaleX(${duration ? audio.currentTime / duration : 0})`;
+      // Antes de tocar mostra a duração; a tocar mostra o tempo que falta.
+      timeEl.textContent = playing || audio.currentTime > 0
+        ? `-${format(duration - audio.currentTime)}`
+        : format(duration);
+    }
+
+    button.addEventListener("click", () => {
+      if (audio.paused) {
+        // A música de fundo cala-se enquanto a minha voz fala.
+        musicWasPlaying = music.isPlaying();
+        if (musicWasPlaying) music.pause();
+        if (audio.ended) audio.currentTime = 0;
+        const attempt = audio.play();
+        if (attempt) attempt.catch(render);
+      } else {
+        audio.pause();
+      }
+    });
+
+    // Tocar na barra salta para essa parte da gravação.
+    track.addEventListener("click", (event) => {
+      if (!audio.duration) return;
+      const rect = track.getBoundingClientRect();
+      audio.currentTime = clamp01((event.clientX - rect.left) / rect.width) * audio.duration;
+      render();
+    });
+
+    audio.addEventListener("ended", () => {
+      render();
+      if (musicWasPlaying) music.play();
+      musicWasPlaying = false;
+    });
+    ["loadedmetadata", "timeupdate", "play", "pause"].forEach((type) => audio.addEventListener(type, render));
+    audio.addEventListener("error", () => { box.hidden = true; });
+    render();
+  }
+
   /* ---------- Estrelas cadentes: um desejo por toque ---------- */
 
   function setupWishes() {
@@ -1474,7 +1541,11 @@
       });
     }
 
-    return { play };
+    return {
+      play,
+      pause: () => audio.pause(),
+      isPlaying: () => !audio.paused,
+    };
   })();
 
   /* ---------- Progresso e capítulos ---------- */
@@ -1531,6 +1602,7 @@
   setupLightbox();
   renderLetter();
   setupEnvelope();
+  setupVoice();
   setupLikes();
   setupSurprise();
   setupProgress();
