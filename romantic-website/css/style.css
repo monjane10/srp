@@ -1857,21 +1857,31 @@ a { color: inherit; }
     radial-gradient(90% 60% at 50% 100%, #3a2d39 0%, transparent 70%),
     var(--night);
   color: var(--paper);
+  /* "clip" corta como "hidden" mas deixa a lua usar position: sticky */
+  overflow: clip;
 }
 
 .surprise .section__number { color: var(--rose); }
 
-/* Lua em quarto crescente, com um halo suave à volta */
-.surprise__moon {
+/* Lua em quarto crescente, com um halo suave à volta.
+   A camada ocupa a secção toda; a lua fica colada ao topo do ecrã
+   enquanto a secção está à vista. */
+.surprise__sky {
   position: absolute;
-  top: clamp(56px, 10vh, 110px);
-  right: clamp(24px, 12vw, 180px);
+  inset: 0;
+  pointer-events: none;
+}
+
+.surprise__moon {
+  --moon-top: clamp(56px, 10vh, 110px);
+  position: sticky;
+  top: var(--moon-top);
   width: clamp(54px, 9vw, 96px);
   aspect-ratio: 1;
+  margin: var(--moon-top) clamp(24px, 12vw, 180px) 0 auto;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 240, 230, 0.16) 0%, rgba(255, 240, 230, 0.05) 45%, transparent 70%);
   box-shadow: 0 0 120px 40px rgba(255, 236, 225, 0.06);
-  pointer-events: none;
 }
 
 .surprise__moon span {
