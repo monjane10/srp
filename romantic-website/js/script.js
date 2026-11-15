@@ -113,13 +113,46 @@
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
 
+    applyReturnGreeting(introConfig.regresso);
+
     root.classList.add("is-locked");
     lockedRegions.forEach((el) => { el.inert = true; });
 
     $("#open-gift").addEventListener("click", openGift, { once: true });
   }
 
+  // Se ela já abriu o presente antes, o ecrã inicial cumprimenta-a de outra forma.
+  const VISITED_KEY = "universo-visitado";
+
+  function hasVisited() {
+    try { return localStorage.getItem(VISITED_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function applyReturnGreeting(settings) {
+    if (!settings || !(settings.sempreRegresso || hasVisited())) return;
+    const now = Date.now();
+    const info = monthInfo(now);
+    const set = (selector, text) => {
+      const el = intro.querySelector(selector);
+      if (el && text) { el.textContent = text; el.hidden = false; }
+    };
+
+    let subtitle = settings.subtitulo;
+    if (info && info.isToday) {
+      subtitle = (hasLetterFor(info.done) ? settings.subtituloHoje : settings.subtituloHojeSemCarta) ||
+        settings.subtituloHoje || subtitle;
+    }
+    else if (info && info.next - now <= 86400000) subtitle = settings.subtituloAmanha || subtitle;
+
+    set('[data-fill="intro.aviso"]', personalise(settings.aviso));
+    set('[data-fill="intro.titulo"]', personalise(settings.titulo));
+    set('[data-fill="intro.subtitulo"]', info ? monthText(subtitle, info, now) : personalise(subtitle));
+    set('[data-fill="intro.botao"]', personalise(settings.botao));
+    intro.classList.add("is-return");
+  }
+
   function openGift() {
+    try { localStorage.setItem(VISITED_KEY, "1"); } catch (e) { /* modo privado */ }
     intro.classList.add("is-opening");
     root.classList.add("is-open");
     root.classList.remove("is-locked");
@@ -204,85 +237,146 @@
     window.setInterval(render, 30000);
   }
 
+  // Datas dos "mesversários": o mesmo dia de cada mês, à meia-noite de Maputo.
+  const MONTH_WORDS = ["um mês", "dois meses", "três meses", "quatro meses", "cinco meses", "meio ano",
+    "sete meses", "oito meses", "nove meses", "dez meses", "onze meses", "um ano"];
+
+  function monthsWord(k) {
+    if (k <= MONTH_WORDS.length) return MONTH_WORDS[k - 1];
+    if (k % 12 === 0) return `${k / 12} anos`;
+    return `${k} meses`;
+  }
+
+  // Em que ponto estamos: meses feitos, se hoje é dia de festa,
+  // quando é o próximo e desde quando estamos juntos.
+  function monthInfo(now) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec((config.mes && config.mes.inicio) || "");
+    if (!match) return null;
+    const [y, m, d] = match.slice(1).map(Number);
+    const at = (k) => Date.UTC(y, m - 1 + k, d) - 2 * 3600000; // 00:00 em Maputo (UTC+2)
+    let done = 0;
+    while (at(done + 1) <= now) done++;
+    return {
+      start: at(0),
+      done,
+      isToday: done >= 1 && now - at(done) < 86400000,
+      next: at(done + 1),
+      nextCount: done + 1,
+    };
+  }
+
+  // Há carta escrita para o mês que fazemos hoje?
+  const hasLetterFor = (k) => ((config.mes && config.mes.cartas) || []).some((c) => c.mes === k);
+
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+  // Substitui {meses}, {proximo}, {dias} e {total} nos textos do mês.
+  function monthText(text, info, now) {
+    const daysLeft = Math.ceil((info.next - now) / 86400000);
+    const together = Math.floor((now - info.start) / 86400000);
+    return personalise(String(text || "")
+      .replace(/\{meses\}/g, monthsWord(Math.max(info.done, 1)))
+      .replace(/\{proximo\}/g, monthsWord(info.nextCount))
+      .replace(/\{dias\}/g, plural(daysLeft, "dia", "dias"))
+      .replace(/\{total\}/g, plural(together, "dia", "dias")));
+  }
+
   /* ---------- Um mês de nós — temporizador ---------- */
 
   function setupMonth() {
     const settings = config.mes || {};
     const section = $("#mes");
-    const start = Date.parse(settings.inicio);
-    const target = Date.parse(settings.marco);
+    const chip = $("#month-chip-text");
 
-    if (!settings.marco || Number.isNaN(target)) {
+    if (!monthInfo(Date.now())) {
       section.hidden = true;
       $("#month-chip").hidden = true;
       return;
     }
 
-    const body = $("#month-body");
-    (settings.paragrafos || []).forEach((text) => {
-      const p = document.createElement("p");
-      p.textContent = personalise(text);
-      p.dataset.reveal = "";
-      body.appendChild(p);
-    });
-
     const els = {
       title: $("#month-title"),
       lead: $("#month-lead"),
       label: $("#timer-label"),
+      together: $("#month-together"),
       days: $("#timer-days"),
       daysName: $("#timer-days-name"),
       hours: $("#timer-hours"),
       minutes: $("#timer-minutes"),
       seconds: $("#timer-seconds"),
+      letter: $("#month-text"),
+      letterLabel: $("#month-letter-label"),
+      body: $("#month-body"),
+      closing: $("#month-closing"),
     };
 
     const pad = (n) => String(n).padStart(2, "0");
-    const DAY = 86400000;
-    const chip = $("#month-chip-text");
-    let state = null;
+    let stateKey = null;
+    let isToday = false;
     let celebrated = false;
 
-    function setState(next) {
-      if (next === state) return;
-      const previous = state;
-      state = next;
-      const texts = settings[next] || {};
-      els.title.textContent = personalise(texts.titulo || "");
-      els.lead.textContent = personalise(texts.subtitulo || "");
-      els.label.textContent = personalise(next === "antes" ? settings.rotuloAntes : settings.rotuloDepois);
-      section.classList.toggle("is-today", next === "hoje");
-      // Se a contagem chegar a zero com a página aberta, festeja logo.
-      if (previous === "antes" && next === "hoje") celebrate();
+    // A carta do mês mais recente (a do mês seguinte só aparece no dia).
+    function showLetter(done) {
+      const letter = (settings.cartas || [])
+        .filter((c) => c.mes <= Math.max(done, 1))
+        .sort((a, b) => b.mes - a.mes)[0];
+      els.body.textContent = "";
+      els.letter.hidden = !letter;
+      if (!letter) return;
+      els.letterLabel.textContent = personalise(letter.rotulo || "");
+      els.closing.textContent = personalise(letter.despedida || "");
+      (letter.paragrafos || []).forEach((text) => {
+        const p = document.createElement("p");
+        p.textContent = personalise(text);
+        p.dataset.reveal = "";
+        els.body.appendChild(p);
+        reveal(p);
+      });
     }
 
     function render() {
       const now = Date.now();
-      let diff;
-      if (now < target) {
-        setState("antes");
-        diff = target - now;
-      } else {
-        setState(now < target + DAY ? "hoje" : "depois");
-        diff = now - (Number.isNaN(start) ? target : start);
+      const info = monthInfo(now);
+      const texts = (info.isToday ? settings.hoje : settings.espera) || {};
+
+      // Título e carta só mudam quando muda o mês ou começa o dia de festa.
+      const key = `${info.done}-${info.isToday}`;
+      if (key !== stateKey) {
+        const wasWaiting = stateKey !== null && !isToday;
+        stateKey = key;
+        isToday = info.isToday;
+        els.title.textContent = monthText(texts.titulo, info, now);
+        els.lead.textContent = monthText(texts.subtitulo, info, now);
+        els.label.textContent = personalise(texts.contagem || "");
+        section.classList.toggle("is-today", isToday);
+        showLetter(info.done);
+        // Se a meia-noite chegar com a página aberta, festeja logo.
+        if (wasWaiting && isToday) celebrate();
       }
 
-      const total = Math.floor(diff / 1000);
+      // No dia de festa conta o tempo juntos; nos outros, o que falta.
+      const total = Math.floor((isToday ? now - info.start : info.next - now) / 1000);
       const days = Math.floor(total / 86400);
+      const hh = pad(Math.floor((total % 86400) / 3600));
+      const mm = pad(Math.floor((total % 3600) / 60));
+      const ss = pad(total % 60);
       els.days.textContent = days;
       els.daysName.textContent = days === 1 ? "dia" : "dias";
-      els.hours.textContent = pad(Math.floor((total % 86400) / 3600));
-      els.minutes.textContent = pad(Math.floor((total % 3600) / 60));
-      els.seconds.textContent = pad(total % 60);
+      els.hours.textContent = hh;
+      els.minutes.textContent = mm;
+      els.seconds.textContent = ss;
+
+      els.together.hidden = isToday || !settings.juntos;
+      if (!els.together.hidden) els.together.textContent = monthText(settings.juntos, info, now);
 
       if (chip) {
-        const clock = `${pad(Math.floor((total % 86400) / 3600))}:${pad(Math.floor((total % 3600) / 60))}:${pad(total % 60)}`;
-        const daysText = days ? `${days} ${days === 1 ? "dia" : "dias"} e ` : "";
-        chip.textContent = state === "antes"
-          ? `Faltam ${daysText}${clock} para o nosso primeiro mês`
-          : state === "hoje"
-            ? "Hoje faz um mês. Tenho uma coisa para ti, lá mais abaixo."
-            : `Juntos há ${days} ${days === 1 ? "dia" : "dias"}`;
+        const next = monthsWord(info.nextCount);
+        chip.textContent = isToday
+          ? `Hoje fazemos ${monthsWord(info.done)}.` +
+            (hasLetterFor(info.done) ? " Tenho uma carta nova para ti, lá mais abaixo." : "")
+          : days >= 1
+            ? `Faltam ${plural(days, "dia", "dias")} para fazermos ${next}`
+            : `Faltam ${hh}:${mm}:${ss} para fazermos ${next}`;
       }
     }
 
@@ -307,10 +401,10 @@
     render();
     window.setInterval(render, 1000);
 
-    // No dia, quando ela chega à secção, caem corações.
+    // No dia de festa, quando ela chega à secção, caem corações.
     if ("IntersectionObserver" in window) {
       const observer = new IntersectionObserver((entries) => {
-        if (entries.some((e) => e.isIntersecting) && state === "hoje") {
+        if (entries.some((e) => e.isIntersecting) && isToday) {
           celebrate();
           observer.disconnect();
         }

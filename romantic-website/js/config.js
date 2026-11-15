@@ -26,6 +26,22 @@ window.SITE_CONFIG = {
     foto: "assets/images/babe.jpeg",
     // Que parte da foto fica sempre visível (horizontal vertical).
     foco: "50% 25%",
+
+    /* Quando ela volta ao site, o ecrã inicial cumprimenta-a de outra forma.
+       sempreRegresso: true = mostra sempre esta versão (ela já abriu o presente).
+       Nos textos podes usar {proximo} ("dois meses"), {dias} (dias que faltam)
+       e {meses} ("dois meses", nos dias 10).  */
+    regresso: {
+      sempreRegresso: true,
+      aviso: "Bem-vinda de volta",
+      titulo: "{nome}, que bom que voltaste.",
+      subtitulo: "Faltam {dias} para fazermos {proximo}. Até lá, este cantinho continua aqui à tua espera.",
+      subtituloAmanha: "Amanhã fazemos {proximo}. Volta cá à meia-noite.",
+      subtituloHoje: "Hoje fazemos {meses}. Há uma carta nova para ti, lá mais abaixo.",
+      // Para os dias 10 em que ainda não escrevi carta nova.
+      subtituloHojeSemCarta: "Hoje fazemos {meses}. Obrigado por cada um destes dias.",
+      botao: "Entrar",
+    },
   },
 
   /* ---------- 2. Abertura ---------- */
@@ -100,37 +116,56 @@ window.SITE_CONFIG = {
     ],
   },
 
-  /* ---------- 2a+. Um mês de nós ----------
-     inicio: o dia em que começámos; marco: o momento da contagem.
-     O "+02:00" é a hora de Maputo, por isso a contagem é igual
-     em qualquer telemóvel, esteja ele onde estiver.
-     Antes do marco aparece a contagem decrescente; depois, o tempo juntos.  */
+  /* ---------- 2a+. Um mês de nós (todos os meses) ----------
+     inicio: o dia em que começámos ("+02:00" = hora de Maputo).
+     Todos os meses, nesse dia, a secção festeja; nos outros dias conta
+     o tempo que falta para o próximo.
+     Nos textos: {meses} = os meses que fazemos hoje ("dois meses"),
+     {proximo} = os que vamos fazer a seguir, {dias} = dias que faltam.  */
   mes: {
     inicio: "2026-10-10T00:00:00+02:00",
-    marco: "2026-11-10T00:00:00+02:00",
-    antes: {
-      titulo: "Falta pouco para o nosso primeiro mês",
-      subtitulo: "Estou a contar os segundos até ao nosso dia.",
+    espera: {
+      titulo: "A contar os dias até fazermos {proximo}",
+      subtitulo: "Cada dia contigo é mais um que eu escolheria outra vez.",
+      contagem: "Faltam",
     },
     hoje: {
-      titulo: "Hoje faz um mês, {nome}.",
-      subtitulo: "Um mês desde o dia em que tudo ficou mais bonito.",
+      titulo: "Hoje fazemos {meses}, {nome}.",
+      subtitulo: "Mais um mês desde o dia em que tudo ficou mais bonito.",
+      contagem: "Juntos há",
     },
-    depois: {
-      titulo: "E o tempo continua a contar",
-      subtitulo: "Desde 10 de outubro, contigo.",
-    },
-    rotuloAntes: "Faltam",
-    rotuloDepois: "Juntos há",
-    paragrafos: [
-      "Há um mês, a minha vida ganhou uma cor nova. Ainda hoje não sei explicar como é que alguém consegue mudar tanto em tão pouco tempo. Só sei que foste tu.",
-      "Fazes-me feliz de uma maneira simples e verdadeira. Não é só nos grandes momentos: é a tua mensagem de bom dia, o teu riso do outro lado, a forma como dizes o meu nome. Contigo, a felicidade deixou de ser uma coisa que eu procurava e passou a ser um sítio onde moro.",
-      "E conversar contigo é das melhores partes do meu dia. Perco a noção das horas, os assuntos nunca acabam e, quando acabam, até o silêncio sabe bem. Contigo posso ser eu, sem medo e sem pressa. Há conversas que nos distraem; as tuas acalmam-me.",
-      "Quero que saibas o quão especial és para mim. És a primeira pessoa em quem penso quando acontece alguma coisa boa, e a última antes de adormecer. Não és só alguém de quem gosto: és alguém que eu escolho, com o coração inteiro, todos os dias.",
-      "Um mês parece pouco no calendário, mas coube tanto nele. Risos, saudades, descobertas, e esta certeza tranquila de que estou exactamente onde quero estar.",
-      "Obrigado por este primeiro mês, {nome}. Que seja só o primeiro de muitos, e que eu continue a fazer-te sorrir como tu me fazes sorrir a mim.",
+    // Linha pequena por baixo da contagem.
+    juntos: "Juntos há {total}",
+
+    /* Uma carta para cada mês. Aparece a do mês mais recente;
+       a do mês seguinte só aparece quando chegar o dia.  */
+    cartas: [
+      {
+        mes: 1,
+        rotulo: "A carta do nosso primeiro mês",
+        paragrafos: [
+          "Há um mês, a minha vida ganhou uma cor nova. Ainda hoje não sei explicar como é que alguém consegue mudar tanto em tão pouco tempo. Só sei que foste tu.",
+          "Fazes-me feliz de uma maneira simples e verdadeira. Não é só nos grandes momentos: é a tua mensagem de bom dia, o teu riso do outro lado, a forma como dizes o meu nome. Contigo, a felicidade deixou de ser uma coisa que eu procurava e passou a ser um sítio onde moro.",
+          "E conversar contigo é das melhores partes do meu dia. Perco a noção das horas, os assuntos nunca acabam e, quando acabam, até o silêncio sabe bem. Contigo posso ser eu, sem medo e sem pressa. Há conversas que nos distraem; as tuas acalmam-me.",
+          "Quero que saibas o quão especial és para mim. És a primeira pessoa em quem penso quando acontece alguma coisa boa, e a última antes de adormecer. Não és só alguém de quem gosto: és alguém que eu escolho, com o coração inteiro, todos os dias.",
+          "Um mês parece pouco no calendário, mas coube tanto nele. Risos, saudades, descobertas, e esta certeza tranquila de que estou exactamente onde quero estar.",
+          "Obrigado por este primeiro mês, {nome}. Que seja só o primeiro de muitos, e que eu continue a fazer-te sorrir como tu me fazes sorrir a mim.",
+        ],
+        despedida: "Feliz um mês, meu amor.",
+      },
+      {
+        mes: 2,
+        rotulo: "A carta dos nossos dois meses",
+        paragrafos: [
+          "Dois meses. Parece pouco quando o digo em voz alta, mas quando penso em tudo o que já vivemos, sinto que te conheço há muito mais tempo.",
+          "Neste mês fiquei a conhecer-te melhor: as tuas manias, os teus silêncios, o que te faz rir sem parar e o que te deixa pensativa. E quanto mais te conheço, mais gosto de ti. Não era suposto ser assim tão fácil, mas contigo é.",
+          "As nossas conversas continuam a ser o melhor do meu dia. Já não são novidade, são casa: aquele sítio onde chego cansado e de onde saio mais leve.",
+          "Obrigado pela paciência, pelo carinho e por me deixares ver-te como és. Prometo continuar a cuidar disto que estamos a construir, com calma e com vontade.",
+          "Venha o terceiro mês, {nome}. E o quarto. E todos os que tu quiseres.",
+        ],
+        despedida: "Feliz dois meses, meu amor.",
+      },
     ],
-    despedida: "Feliz um mês, meu amor.",
   },
 
   /* ---------- 2b. Um dia na minha cabeça ----------

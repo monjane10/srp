@@ -803,6 +803,13 @@ a { color: inherit; }
   color: var(--wine-deep);
 }
 
+.timer__together {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
 .timer__units {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -848,6 +855,15 @@ a { color: inherit; }
   max-width: 660px;
   margin: 0 auto;
   text-align: center;
+}
+
+.month__label {
+  margin-bottom: 22px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--wine-deep);
 }
 
 .month__body {
