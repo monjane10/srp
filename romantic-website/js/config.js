@@ -284,18 +284,18 @@ window.SITE_CONFIG = {
 
   /* ---------- 6. Surpresa final ---------- */
   surpresa: {
-    // Nome desenhado com estrelas quando ela descobre a surpresa.
-    constelacao: "{nome}",
-    legendaConstelacao: "Constelação {nome}",
+    // Frase desenhada com estrelas quando ela descobre a surpresa.
+    constelacao: "Eu amo-te",
+    // Texto pequeno por baixo das estrelas (vazio = não aparece).
+    legendaConstelacao: "",
     titulo: "A surpresa mudou. Queres ver?",
     subtitulo: "Da última vez disse-te que te escolhia outra vez. Continua a ser verdade, mas tenho uma coisa para acrescentar.",
     botao: "Mostrar a surpresa nova",
     // Cada linha aparece como um parágrafo separado.
     mensagem: [
-      "Se o universo me desse um desejo, eu não o gastava.",
-      "Já tenho o que queria.",
-      "Por isso este céu fica para ti. Pede tu.",
-      "Amo-te, {nome}.",
+      "Escrevi no céu para não haver dúvidas.",
+      "Se o universo me desse um desejo, eu não o gastava. Já tenho o que queria.",
+      "Por isso este céu fica para ti, {nome}. Pede tu.",
     ],
     notaFinal: "Este universo vai continuar a mudar. Volta no dia 10.",
     // Depois da surpresa, cada toque no céu lança uma estrela cadente.

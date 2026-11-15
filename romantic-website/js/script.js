@@ -1056,6 +1056,7 @@
     const start = constellation.hasName ? 3.2 : 0.5;
     const caption = $("#constellation-caption");
     caption.textContent = personalise(surprise.legendaConstelacao || "");
+    caption.hidden = !caption.textContent;
     caption.style.setProperty("--delay", "2.6s");
 
     (surprise.mensagem || []).forEach((line, i) => {
@@ -1381,7 +1382,7 @@
 
     function start() {
       if (!name) return;
-      canvas.setAttribute("aria-label", `Estrelas ligadas a desenhar o nome ${name}`);
+      canvas.setAttribute("aria-label", `Estrelas ligadas a escrever: ${name}`);
       const fontReady = document.fonts
         ? document.fonts.load("200 100px Manrope").catch(() => {})
         : Promise.resolve();
