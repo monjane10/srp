@@ -34,15 +34,65 @@ window.SITE_CONFIG = {
        e {meses} ("dois meses", nos dias 10).  */
     regresso: {
       sempreRegresso: true,
-      aviso: "Achas que já leste tudo?",
-      titulo: "{nome}, mudei umas coisas enquanto não estavas a ver.",
-      subtitulo: "Palavras novas, provas novas, uma carta nova. E faltam {dias} para fazermos {proximo}.",
+      aviso: "Sessão especial · só para ti",
+      titulo: "{nome}, hoje há estreia.",
+      subtitulo: "Guardei-te o melhor lugar da sala. E faltam {dias} para fazermos {proximo}.",
       subtituloAmanha: "Amanhã fazemos {proximo}. Eu já estou acordado à espera da meia-noite.",
       subtituloHoje: "Hoje fazemos {meses}. Escrevi-te uma carta nova, está lá mais abaixo.",
       // Para os dias 10 em que ainda não escrevi carta nova.
       subtituloHojeSemCarta: "Hoje fazemos {meses}. E eu continuo a achar que tive uma sorte enorme.",
-      botao: "Ver o que mudou",
+      botao: "Entrar na sala",
     },
+  },
+
+  /* ---------- O filme ----------
+     O site é apresentado como um filme: bilhete de entrada, cena de
+     abertura com o vídeo, e créditos finais.  */
+  filme: {
+    video: "assets/videos/baby.mp4",
+    videoDescricao: "Vídeo da {nome}",
+    apresenta: "{remetente} apresenta",
+    titulo: "{nome}",
+    slogan: "Uma história de amor em exibição desde 10 de outubro.",
+    // A ficha do filme, por baixo do título.
+    ficha: [
+      ["Realização", "{remetente}"],
+      ["Protagonista", "{nome}"],
+      ["Género", "Romance"],
+      ["Classificação", "Só para ti"],
+    ],
+    somLigar: "Ligar o som",
+    somDesligar: "Tirar o som",
+    continuar: "Ver o filme",
+
+    // O bilhete do ecrã inicial.
+    bilhete: {
+      topo: "Admite uma pessoa",
+      numero: "N.º 0010",
+      sala: "10",
+      fila: "B",
+      lugar: "♥",
+    },
+    // Etiqueta no cartaz (a fotografia do ecrã inicial).
+    cartaz: "Em exibição",
+
+    // Créditos finais, no fim do site.
+    creditosTitulo: "Créditos finais",
+    creditos: [
+      ["Realização", "{remetente}"],
+      ["Argumento", "{remetente}, com a ajuda das saudades"],
+      ["Protagonista", "{nome}"],
+      ["Actor secundário", "{remetente}, muito feliz"],
+      ["Fotografia", "{nome}, sem esforço nenhum"],
+      ["Banda sonora", "Heaven Baby · Ayra Starr ft. Zayn"],
+      ["Cenário", "Maputo"],
+      ["Duração", "Para sempre"],
+      ["Agradecimento especial", "Ao dia 10 de outubro"],
+    ],
+    nota: "Nenhum coração foi partido durante a rodagem deste filme.",
+    fim: "Fim",
+    sequela: "…ou não. A sequela estreia no próximo dia 10.",
+    voltar: "Ver outra vez",
   },
 
   /* ---------- 2. Abertura ---------- */
@@ -50,9 +100,8 @@ window.SITE_CONFIG = {
     dedicatoria: "Para a minha {nome}",
     titulo: "Voltaste. Eu sabia que voltavas.",
     texto:
-      "Este universo cresce contigo. Desde a última vez, reescrevi quase tudo: " +
-      "há um diário, um tribunal, uma carta nova e uma surpresa diferente. " +
-      "Lê devagar, que eu escrevi devagar.",
+      "Este universo virou cinema. Há um diário, um tribunal, uma carta com a " +
+      "minha voz e, no fim, os créditos. Senta-te, apaga as luzes: o filme é teu.",
   },
 
   /* ---------- 2a. A frase de hoje ----------

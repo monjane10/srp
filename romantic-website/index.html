@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Um pequeno universo para ti</title>
   <meta name="description" content="Um pequeno universo criado especialmente para ti.">
-  <meta name="theme-color" content="#292329">
+  <meta name="theme-color" content="#0d0a0c">
   <!-- É um presente privado: pede aos motores de busca para não indexar. -->
   <meta name="robots" content="noindex, nofollow">
   <meta property="og:title" content="Fiz uma coisa para ti…">
@@ -25,6 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@200;400;500;600&family=Parisienne&display=swap">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/filme.css">
 
   <script>document.documentElement.classList.replace("no-js", "js");</script>
 </head>
@@ -33,6 +34,7 @@
     <p class="noscript">Este presente precisa de JavaScript activado para abrir. Activa-o e volta a carregar a página.</p>
   </noscript>
 
+  <div class="grain" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><span class="progress__bar"></span></div>
 
   <!-- ============ ECRÃ INICIAL ============ -->
@@ -40,7 +42,8 @@
     <div class="stars" aria-hidden="true"></div>
 
     <div class="intro__inner">
-      <div class="intro__text">
+      <div class="intro__text ticket">
+        <p class="ticket__top" aria-hidden="true"><span data-fill="filme.bilhete.topo"></span><span data-fill="filme.bilhete.numero"></span></p>
         <div class="seal" aria-hidden="true">
           <span class="seal__half seal__half--left"></span>
           <span class="seal__half seal__half--right"></span>
@@ -53,9 +56,14 @@
           <span data-fill="intro.botao"></span>
           <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
+        <div class="ticket__stub" aria-hidden="true">
+          <span><small>Sala</small><b data-fill="filme.bilhete.sala"></b></span>
+          <span><small>Fila</small><b data-fill="filme.bilhete.fila"></b></span>
+          <span><small>Lugar</small><b data-fill="filme.bilhete.lugar"></b></span>
+        </div>
       </div>
 
-      <div class="intro__arch">
+      <div class="intro__arch" data-label="">
         <div class="intro__photo media">
           <img id="intro-photo" alt="" decoding="async" fetchpriority="high">
         </div>
@@ -65,6 +73,7 @@
 
   <!-- ============ NAVEGAÇÃO DISCRETA ============ -->
   <nav class="chapters" aria-label="Secções do presente">
+    <a class="chapters__link" href="#estreia" data-label="Cena de abertura"><span class="sr-only">Cena de abertura</span></a>
     <a class="chapters__link" href="#abertura" data-label="Abertura"><span class="sr-only">Abertura</span></a>
     <a class="chapters__link" href="#dia" data-label="Um dia na minha cabeça"><span class="sr-only">Um dia na minha cabeça</span></a>
     <a class="chapters__link" href="#galeria" data-label="Galeria"><span class="sr-only">Galeria</span></a>
@@ -72,9 +81,43 @@
     <a class="chapters__link" href="#gosto" data-label="O que gosto em ti"><span class="sr-only">O que gosto em ti</span></a>
     <a class="chapters__link" href="#mes" data-label="Um mês de nós"><span class="sr-only">Um mês de nós</span></a>
     <a class="chapters__link" href="#surpresa" data-label="Surpresa"><span class="sr-only">Surpresa</span></a>
+    <a class="chapters__link" href="#creditos" data-label="Créditos finais"><span class="sr-only">Créditos finais</span></a>
   </nav>
 
   <main class="experience" id="conteudo">
+
+    <!-- ============ CENA DE ABERTURA (o vídeo) ============
+         As cortinas abrem-se quando ela entra na sala. -->
+    <section class="trailer" id="estreia" aria-labelledby="trailer-title">
+      <div class="trailer__curtain trailer__curtain--left" aria-hidden="true"></div>
+      <div class="trailer__curtain trailer__curtain--right" aria-hidden="true"></div>
+
+      <div class="trailer__inner">
+        <figure class="trailer__screen">
+          <div class="trailer__frame">
+            <div class="trailer__clip">
+              <video class="trailer__video" id="trailer-video" muted loop playsinline preload="auto"></video>
+            </div>
+          </div>
+          <button class="trailer__sound" id="trailer-sound" type="button" aria-pressed="false" hidden>
+            <svg class="trailer__sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM17 9l4 6M21 9l-4 6"/></svg>
+            <svg class="trailer__sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+            <span id="trailer-sound-text"></span>
+          </button>
+        </figure>
+
+        <div class="trailer__credits">
+          <p class="trailer__presents" data-fill="filme.apresenta"></p>
+          <h2 class="trailer__title" id="trailer-title" tabindex="-1" data-fill="filme.titulo"></h2>
+          <p class="trailer__tagline" data-fill="filme.slogan"></p>
+          <dl class="trailer__facts" id="trailer-facts"></dl>
+          <a class="scroll-cue trailer__cue" href="#abertura">
+            <span data-fill="filme.continuar"></span>
+            <span class="scroll-cue__line" aria-hidden="true"></span>
+          </a>
+        </div>
+      </div>
+    </section>
 
     <!-- ============ ABERTURA ============ -->
     <section class="section opening" id="abertura" aria-labelledby="opening-title">
@@ -282,6 +325,15 @@
           <a class="surprise__top" href="#abertura">Voltar ao início</a>
         </div>
       </div>
+    </section>
+    <!-- ============ CRÉDITOS FINAIS ============ -->
+    <section class="credits" id="creditos" aria-labelledby="credits-title">
+      <h2 class="credits__heading" id="credits-title" data-fill="filme.creditosTitulo" data-reveal></h2>
+      <dl class="credits__list" id="credits-list"></dl>
+      <p class="credits__note" data-fill="filme.nota" data-reveal></p>
+      <p class="credits__end" data-fill="filme.fim" data-reveal></p>
+      <p class="credits__sequel" data-fill="filme.sequela" data-reveal></p>
+      <a class="credits__top" href="#estreia" data-fill="filme.voltar" data-reveal></a>
     </section>
   </main>
 

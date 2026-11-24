@@ -159,12 +159,118 @@
     lockedRegions.forEach((el) => { el.inert = false; });
 
     if (config.musica && config.musica.tocarAoAbrir) music.play();
+    trailerStart();
 
     const duration = prefersReducedMotion() ? 320 : 1450;
     window.setTimeout(() => {
       intro.hidden = true;
-      $("#opening-title").focus({ preventScroll: true });
+      $("#trailer-title").focus({ preventScroll: true });
     }, duration);
+  }
+
+  /* ---------- Cena de abertura: o vídeo ---------- */
+
+  function setupTrailer() {
+    const settings = config.filme || {};
+    const section = $("#estreia");
+    const video = $("#trailer-video");
+    const sound = $("#trailer-sound");
+    const soundText = $("#trailer-sound-text");
+
+    // Ficha do filme
+    const facts = $("#trailer-facts");
+    (settings.ficha || []).forEach(([term, value]) => {
+      const row = document.createElement("div");
+      const dt = document.createElement("dt");
+      const dd = document.createElement("dd");
+      dt.textContent = personalise(term);
+      dd.textContent = personalise(value);
+      row.append(dt, dd);
+      facts.appendChild(row);
+    });
+
+    // Etiqueta do cartaz no ecrã inicial
+    const poster = $(".intro__arch");
+    if (poster) poster.dataset.label = personalise(settings.cartaz || "");
+
+    if (!settings.video) {
+      section.querySelector(".trailer__screen").hidden = true;
+      return;
+    }
+
+    video.src = settings.video;
+    video.setAttribute("aria-label", personalise(settings.videoDescricao || ""));
+    let musicWasPlaying = false;
+    let inView = false;
+
+    function renderSound() {
+      const on = !video.muted;
+      sound.setAttribute("aria-pressed", String(on));
+      sound.classList.toggle("is-on", on);
+      soundText.textContent = personalise(on ? settings.somDesligar : settings.somLigar);
+    }
+
+    function setSound(on) {
+      if (on === !video.muted) return;
+      if (on) {
+        // Enquanto ela ouve o vídeo, a música de fundo cala-se.
+        musicWasPlaying = music.isPlaying();
+        if (musicWasPlaying) music.pause();
+        video.muted = false;
+        video.currentTime = 0;
+        const attempt = video.play();
+        if (attempt) attempt.catch(() => {});
+      } else {
+        video.muted = true;
+        if (musicWasPlaying) music.play();
+        musicWasPlaying = false;
+      }
+      renderSound();
+    }
+
+    sound.hidden = false;
+    renderSound();
+    sound.addEventListener("click", () => setSound(video.muted));
+    video.addEventListener("click", () => setSound(video.muted));
+
+    // Só toca enquanto está à vista (poupa bateria e dados).
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView && root.classList.contains("is-open")) {
+          const attempt = video.play();
+          if (attempt) attempt.catch(() => {});
+        } else if (!inView) {
+          video.pause();
+          setSound(false);
+        }
+      }, { threshold: 0.25 }).observe(section);
+    }
+
+    // Quando ela entra na sala, o filme começa.
+    trailerStart = () => {
+      const attempt = video.play();
+      if (attempt) attempt.catch(() => {});
+    };
+  }
+
+  let trailerStart = () => {};
+
+  /* ---------- Créditos finais ---------- */
+
+  function renderCredits() {
+    const list = $("#credits-list");
+    ((config.filme && config.filme.creditos) || []).forEach(([role, name]) => {
+      const row = document.createElement("div");
+      row.className = "credits__row";
+      row.dataset.reveal = "";
+      const dt = document.createElement("dt");
+      const dd = document.createElement("dd");
+      dt.textContent = personalise(role);
+      dd.textContent = personalise(name);
+      row.append(dt, dd);
+      list.appendChild(row);
+    });
   }
 
   /* ---------- A frase de hoje ---------- */
@@ -1672,6 +1778,8 @@
   fillTexts();
   document.querySelectorAll(".stars").forEach((el) => scatterStars(el, window.innerWidth < 600 ? 50 : 90));
   setupIntro();
+  setupTrailer();
+  renderCredits();
   setupDaily();
   setupMonth();
   setupDay();
