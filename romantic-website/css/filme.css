@@ -589,6 +589,8 @@ body {
 
 .envelope__hint { color: var(--film-muted); }
 
+.letter { color: var(--ink); }
+
 .letter { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 40px 90px -40px rgba(0, 0, 0, 1), 0 0 120px -40px rgba(243, 232, 216, 0.25); }
 
 /* =====================================================================
@@ -597,6 +599,41 @@ body {
 
 .likes { background: var(--film-bg); }
 .likes__dots { color: var(--film-cream); }
+
+/* Cartões claros como bilhetes, com texto escuro para se ler bem */
+.deck__card {
+  border-color: rgba(217, 178, 111, 0.35);
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(217, 178, 111, 0.16), transparent 60%),
+    var(--film-cream);
+  color: var(--ink);
+  box-shadow: 0 30px 60px -34px #000;
+}
+
+.deck__quote { color: var(--film-velvet); }
+.deck__text { color: var(--ink); }
+.deck__num { color: var(--film-velvet); }
+
+/* A capa do baralho em veludo */
+.deck__card--cover {
+  border-color: rgba(217, 178, 111, 0.45);
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(217, 178, 111, 0.22), transparent 55%),
+    linear-gradient(160deg, #8d2236, var(--film-velvet) 55%, var(--film-velvet-deep));
+  color: var(--film-cream);
+}
+
+.deck__card--cover .deck__cover-num { color: var(--film-cream); }
+.deck__card--cover .deck__cover-hint { color: var(--film-gold); }
+
+.deck__card--final {
+  border-color: var(--film-gold);
+  background: var(--film-bg-raised);
+  color: var(--film-cream);
+}
+
+.deck__card--final .deck__text { color: var(--film-cream); }
+.deck__card--final .deck__quote { color: var(--film-gold); }
 
 /* =====================================================================
    UM MÊS DE NÓS
