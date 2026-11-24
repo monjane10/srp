@@ -57,7 +57,7 @@ window.SITE_CONFIG = {
     // A ficha do filme, por baixo do título.
     ficha: [
       ["Realização", "{remetente}"],
-      ["Protagonista", "{nome}"],
+      ["Protagonista", "Meu amor"],
       ["Género", "Romance"],
       ["Classificação", "Só para ti"],
     ],
@@ -81,7 +81,7 @@ window.SITE_CONFIG = {
     creditos: [
       ["Realização", "{remetente}"],
       ["Argumento", "{remetente}, com a ajuda das saudades"],
-      ["Protagonista", "{nome}"],
+      ["Protagonista", "Meu amor"],
       ["Actor secundário", "{remetente}, muito feliz"],
       ["Fotografia", "{nome}, sem esforço nenhum"],
       ["Banda sonora", "Heaven Baby · Ayra Starr ft. Zayn"],
