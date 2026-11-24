@@ -319,6 +319,11 @@
         if (months >= 1 && months <= specials.length) special = specials[months - 1];
       }
 
+      // Uma frase marcada para este dia em concreto ganha a todas.
+      const iso = `${today.y}-${String(today.m).padStart(2, "0")}-${String(today.d).padStart(2, "0")}`;
+      const dated = (settings.datas || {})[iso];
+      if (dated) special = { titulo: dated.titulo, frase: dated.frase };
+
       let text;
       if (special) {
         text = special.frase;
