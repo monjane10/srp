@@ -13,7 +13,7 @@ window.SITE_CONFIG = {
   nome: "Baby",
 
   // O teu nome, usado na assinatura da carta e no rodapé.
-  remetente: "Lourenço",
+  remetente: "Monjane",
 
   // Título que aparece no separador do navegador.
   tituloPagina: "Um pequeno universo para a minha {nome}",
